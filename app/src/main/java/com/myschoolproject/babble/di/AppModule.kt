@@ -1,9 +1,16 @@
 package com.myschoolproject.babble.di
 
 import android.util.Log
+import com.myschoolproject.babble.data.repository.TestRepositoryImpl
+import com.myschoolproject.babble.data.repository.UserRepositoryImpl
 import com.myschoolproject.babble.data.source.remote.BabbleApi
+import com.myschoolproject.babble.domain.repository.TestRepository
+import com.myschoolproject.babble.domain.repository.UserRepository
 import com.myschoolproject.babble.utils.Constants
+import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONObject
@@ -11,6 +18,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
+@Module
+@InstallIn(SingletonComponent::class)
 object AppModule {
 
     @Singleton
@@ -57,6 +66,18 @@ object AppModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(BabbleApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideTestRepository(api: BabbleApi): TestRepository {
+        return TestRepositoryImpl(api)
+    }
+
+    @Singleton
+    @Provides
+    fun provideUserRepository(api: BabbleApi): UserRepository {
+        return UserRepositoryImpl(api)
     }
 
 }
