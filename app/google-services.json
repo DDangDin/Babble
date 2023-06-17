@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "486943907185",
+    "project_id": "babble-d075c",
+    "storage_bucket": "babble-d075c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:486943907185:android:c4946b033903f52567ead0",
+        "android_client_info": {
+          "package_name": "com.myschoolproject.babble"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "486943907185-0ta8nqk608j9eim37g90grhmnk7bc5qs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.myschoolproject.babble",
+            "certificate_hash": "ab158040818598d773a76cb1028e46fb6f84039f"
+          }
+        },
+        {
+          "client_id": "486943907185-ohi99quglsdqq4ah1ljktt029aaus367.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVUr-69b5XtXSnNBLAfZ_gsnDYZuqBxYs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "486943907185-ohi99quglsdqq4ah1ljktt029aaus367.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

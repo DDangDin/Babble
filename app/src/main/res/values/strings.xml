@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Babble</string>
+    <string name="title_activity_home">HomeActivity</string>
+
+
+    <!-- LoginScreen -->
+    <string name="google_login_button">SIGN IN WITH GOOGLE</string>
+    <string name="login_trouble_text">Trouble Signing In?</string>
+    
 </resources>
