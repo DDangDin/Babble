@@ -6,6 +6,9 @@ plugins {
     id 'com.google.gms.google-services'
 }
 
+// Load KeyValue
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
 android {
     namespace 'com.myschoolproject.babble'
@@ -22,6 +25,8 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+
+        buildConfigField "String", "GOOGLE_CLIENT_ID", properties['google_client_id']
     }
 
     buildTypes {
@@ -139,6 +144,12 @@ dependencies {
     // Firebase
     implementation platform('com.google.firebase:firebase-bom:32.1.1')
 //    implementation 'com.google.firebase:firebase-analytics-ktx'
+    // Firebase - Auth
+    implementation 'com.google.android.gms:play-services-auth:20.5.0'
+    implementation 'com.google.firebase:firebase-auth'
+
+    // Splash API
+    implementation "androidx.core:core-splashscreen:1.0.1"
 
     // Preferences
     implementation 'androidx.preference:preference:1.2.0'

@@ -14,7 +14,7 @@
       },
       "oauth_client": [
         {
-          "client_id": "486943907185-0ta8nqk608j9eim37g90grhmnk7bc5qs.apps.googleusercontent.com",
+          "client_id": "486943907185-fodqqg4pco3squspml2k24k6oihqaojs.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.myschoolproject.babble",
@@ -22,7 +22,7 @@
           }
         },
         {
-          "client_id": "486943907185-ohi99quglsdqq4ah1ljktt029aaus367.apps.googleusercontent.com",
+          "client_id": "486943907185-1t1h9hsvo0b3i6jm7ehsf28th4jkraq0.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -35,7 +35,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "486943907185-ohi99quglsdqq4ah1ljktt029aaus367.apps.googleusercontent.com",
+              "client_id": "486943907185-1t1h9hsvo0b3i6jm7ehsf28th4jkraq0.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

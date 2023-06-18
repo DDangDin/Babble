@@ -4,12 +4,16 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.AuthCredential
+import com.myschoolproject.babble.domain.repository.AuthRepository
 import com.myschoolproject.babble.domain.repository.TestRepository
 import com.myschoolproject.babble.domain.repository.UserRepository
 import com.myschoolproject.babble.presentation.state.CheckAccountState
+import com.myschoolproject.babble.presentation.state.GoogleSignInState
 import com.myschoolproject.babble.presentation.state.TestState
 import com.myschoolproject.babble.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -18,7 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val testRepository: TestRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val authRepository: AuthRepository
 ): ViewModel() {
     private val TAG = "BabbleLog_LoginViewModel"
 
@@ -28,12 +33,39 @@ class LoginViewModel @Inject constructor(
     private val _checkAccountState = mutableStateOf(CheckAccountState())
     val checkAccountState: State<CheckAccountState> = _checkAccountState
 
+    private val _googleSignInState = mutableStateOf(GoogleSignInState())
+    val googleSignInState: State<GoogleSignInState> = _googleSignInState
+
     init {
 
     }
 
-    // 만약 isExist 값이 true가 되면 밑에 함수에 사용된 email로 가입된
-    // 계정이 있으므로 email 값만 (HomeScreen?으로) 넘기면 됨
+    fun googleSignIn(credential: AuthCredential) = viewModelScope.launch {
+        authRepository.googleSignIn(credential).onEach{ result ->
+            when(result) {
+                is Resource.Success -> {
+                    _googleSignInState.value = googleSignInState.value.copy(
+                        result = result.data,
+                        loading = false
+                    )
+                }
+
+                is Resource.Loading -> {
+                    _googleSignInState.value = googleSignInState.value.copy(
+                        loading = true
+                    )
+                }
+
+                is Resource.Error -> {
+                    _googleSignInState.value = googleSignInState.value.copy(
+                        error = result.message ?: "Unexpected Error",
+                        loading = false
+                    )
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
     fun checkAccount(email: String) {
         viewModelScope.launch {
             userRepository.checkAccount("mock@test.com").onEach { result ->

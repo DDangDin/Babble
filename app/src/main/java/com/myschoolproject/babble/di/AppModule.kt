@@ -1,9 +1,12 @@
 package com.myschoolproject.babble.di
 
 import android.util.Log
+import com.google.firebase.auth.FirebaseAuth
+import com.myschoolproject.babble.data.repository.AuthRepositoryImpl
 import com.myschoolproject.babble.data.repository.TestRepositoryImpl
 import com.myschoolproject.babble.data.repository.UserRepositoryImpl
 import com.myschoolproject.babble.data.source.remote.BabbleApi
+import com.myschoolproject.babble.domain.repository.AuthRepository
 import com.myschoolproject.babble.domain.repository.TestRepository
 import com.myschoolproject.babble.domain.repository.UserRepository
 import com.myschoolproject.babble.utils.Constants
@@ -22,8 +25,8 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    @Singleton
     @Provides
+    @Singleton
     fun provideBabbleApi(): BabbleApi {
 
         fun String?.isJsonObject(): Boolean {
@@ -68,16 +71,26 @@ object AppModule {
             .create(BabbleApi::class.java)
     }
 
-    @Singleton
     @Provides
+    @Singleton
     fun provideTestRepository(api: BabbleApi): TestRepository {
         return TestRepositoryImpl(api)
     }
 
-    @Singleton
     @Provides
+    @Singleton
     fun provideUserRepository(api: BabbleApi): UserRepository {
         return UserRepositoryImpl(api)
     }
 
+    // Auth(Firebase)
+    @Provides
+    @Singleton
+    fun provideFirebaseAuth() = FirebaseAuth.getInstance()
+
+    @Provides
+    @Singleton
+    fun provideAuthRepository(firebaseAuth: FirebaseAuth): AuthRepository {
+        return AuthRepositoryImpl(firebaseAuth)
+    }
 }

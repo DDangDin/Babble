@@ -1,5 +1,10 @@
 package com.myschoolproject.babble.presentation.view.onboard
 
+import android.content.Context
+import android.content.Intent
+import android.widget.Toast
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.result.ActivityResult
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -21,8 +26,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.myschoolproject.babble.R
 import com.myschoolproject.babble.ui.theme.PretendardFont
+import com.myschoolproject.babble.utils.Constants
 
 @Composable
 fun GoogleLoginButton(
