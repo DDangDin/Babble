@@ -2,6 +2,7 @@ package com.myschoolproject.babble.data.repository
 
 import android.util.Log
 import com.myschoolproject.babble.data.source.remote.BabbleApi
+import com.myschoolproject.babble.data.source.remote.request.RegisterRequest
 import com.myschoolproject.babble.data.source.remote.response.dto.CheckAccount
 import com.myschoolproject.babble.data.source.remote.response.dto.user.User
 import com.myschoolproject.babble.domain.repository.UserRepository
@@ -45,6 +46,28 @@ class UserRepositoryImpl(
         try {
 
             val call = api.loginWithEmail(email)
+            val response = call.await()
+            emit(Resource.Success(response))
+
+        } catch (e: IOException) {
+
+            Log.d(TAG, "error: ${e.localizedMessage}")
+            emit(Resource.Error(message = "error: ${e.localizedMessage ?: "internet connection error"}"))
+
+        } catch (e: HttpException) {
+
+            Log.d(TAG, "error: ${e.localizedMessage}")
+            emit(Resource.Error(message = "error: ${e.localizedMessage ?: "unexpected error"}"))
+
+        }
+    }
+
+    override suspend fun register(registerRequest: RegisterRequest): Flow<Resource<User>> = flow {
+        emit(Resource.Loading())
+
+        try {
+
+            val call = api.register(registerRequest)
             val response = call.await()
             emit(Resource.Success(response))
 

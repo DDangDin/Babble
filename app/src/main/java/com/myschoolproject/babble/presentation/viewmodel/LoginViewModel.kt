@@ -5,12 +5,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.AuthCredential
+import com.myschoolproject.babble.data.source.remote.request.FriendReq
+import com.myschoolproject.babble.data.source.remote.request.RegisterRequest
 import com.myschoolproject.babble.domain.repository.AuthRepository
 import com.myschoolproject.babble.domain.repository.TestRepository
 import com.myschoolproject.babble.domain.repository.UserRepository
 import com.myschoolproject.babble.presentation.state.CheckAccountState
 import com.myschoolproject.babble.presentation.state.GoogleSignInState
 import com.myschoolproject.babble.presentation.state.TestState
+import com.myschoolproject.babble.presentation.state.UserState
 import com.myschoolproject.babble.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
@@ -24,7 +27,7 @@ class LoginViewModel @Inject constructor(
     private val testRepository: TestRepository,
     private val userRepository: UserRepository,
     private val authRepository: AuthRepository
-): ViewModel() {
+) : ViewModel() {
     private val TAG = "BabbleLog_LoginViewModel"
 
     private val _testState = mutableStateOf(TestState())
@@ -36,13 +39,24 @@ class LoginViewModel @Inject constructor(
     private val _googleSignInState = mutableStateOf(GoogleSignInState())
     val googleSignInState: State<GoogleSignInState> = _googleSignInState
 
-    init {
+    private val _userState = mutableStateOf(UserState())
+    val userState: State<UserState> = _userState
 
-    }
+    var nickname = mutableStateOf("")
+        private set
+    var age = mutableStateOf("")
+        private set
+    var city = mutableStateOf("")
+        private set
+    var gender = mutableStateOf("")
+        private set
+    var phoneNumber = mutableStateOf("")
+        private set
+
 
     fun googleSignIn(credential: AuthCredential) = viewModelScope.launch {
-        authRepository.googleSignIn(credential).onEach{ result ->
-            when(result) {
+        authRepository.googleSignIn(credential).onEach { result ->
+            when (result) {
                 is Resource.Success -> {
                     _googleSignInState.value = googleSignInState.value.copy(
                         result = result.data,
@@ -76,11 +90,13 @@ class LoginViewModel @Inject constructor(
                             loading = false
                         )
                     }
+
                     is Resource.Loading -> {
                         _checkAccountState.value = checkAccountState.value.copy(
                             loading = true
                         )
                     }
+
                     is Resource.Error -> {
                         _checkAccountState.value = checkAccountState.value.copy(
                             loading = false,
@@ -90,5 +106,66 @@ class LoginViewModel @Inject constructor(
                 }
             }.launchIn(viewModelScope)
         }
+    }
+
+    fun register() {
+        val registerRequest = RegisterRequest(
+            age = age.value.toInt(),
+            email = googleSignInState.value.result?.user?.email ?: "test@test.com",
+            friends = emptyList(),
+            gender = gender.value,
+            nickname = nickname.value,
+            phoneNumber = phoneNumber.value.ifEmpty { "" },
+            thumbnail = googleSignInState.value.result?.user?.photoUrl.toString() ?: "",
+            username = googleSignInState.value.result?.user?.displayName ?: "",
+        )
+
+        viewModelScope.launch {
+            userRepository.register(registerRequest).onEach { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        _userState.value = userState.value.copy(
+                            userData = result.data,
+                            loading = false
+                        )
+                    }
+
+                    is Resource.Loading -> {
+                        _userState.value = userState.value.copy(
+                            loading = true
+                        )
+                    }
+
+                    is Resource.Error -> {
+                        _userState.value = userState.value.copy(
+                            error = result.message ?: "Unexpected Error",
+                            loading = false
+                        )
+                    }
+                }
+            }.launchIn(viewModelScope)
+        }
+    }
+
+
+    // for Register InputData
+    fun genderChanged(value: String) {
+        gender.value = value
+    }
+
+    fun nicknameChanged(value: String) {
+        nickname.value = value
+    }
+
+    fun ageChanged(value: String) {
+        age.value = value
+    }
+
+    fun cityChanged(value: String) {
+        city.value = value
+    }
+
+    fun phoneNumberChanged(value: String) {
+        phoneNumber.value = value
     }
 }

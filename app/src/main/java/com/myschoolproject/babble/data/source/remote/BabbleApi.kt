@@ -1,5 +1,6 @@
 package com.myschoolproject.babble.data.source.remote
 
+import com.myschoolproject.babble.data.source.remote.request.RegisterRequest
 import com.myschoolproject.babble.data.source.remote.response.dto.CheckAccount
 import com.myschoolproject.babble.data.source.remote.response.dto.TestResponse
 import com.myschoolproject.babble.data.source.remote.response.dto.user.User
@@ -22,5 +23,10 @@ interface BabbleApi {
     @POST("/api/auth/login/{email}")
     fun loginWithEmail(
         @Path("email") email: String
+    ): Call<User>
+
+    @POST("api/auth/register")
+    fun register(
+        @Body registerRequest: RegisterRequest
     ): Call<User>
 }

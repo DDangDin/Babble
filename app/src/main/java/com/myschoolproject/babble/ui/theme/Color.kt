@@ -20,3 +20,6 @@ val TextBig = Color(0xFF282828)
 val TextRegular = Color(0xFF444142)
 val TextHint = Color(0xFF827B7D)
 
+val TextFieldBackground = Color(0xFFF5F5F5)
+val IconBackColor = Color(0xFF5C5A60)
+

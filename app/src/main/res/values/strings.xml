@@ -2,9 +2,18 @@
     <string name="app_name">Babble</string>
     <string name="title_activity_home">HomeActivity</string>
 
-
     <!-- LoginScreen -->
     <string name="google_login_button">SIGN IN WITH GOOGLE</string>
     <string name="login_trouble_text">Trouble Signing In?</string>
-    
+
+    <!-- RegisterScreen_1 -->
+    <string name="register_1_title">추가 정보</string>
+    <string name="register_1_subTitle_1">닉네임</string>
+    <string name="register_1_subTitle_2">나이</string>
+    <string name="register_1_subTitle_3">거주지역</string>
+    <string name="register_1_subTitle_4">성별</string>
+
+    <!-- ButtonText -->
+    <string name="btn_next_text">다음</string>
+
 </resources>

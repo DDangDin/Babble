@@ -58,14 +58,15 @@ import kotlinx.coroutines.launch
 @Composable
 fun OnBoardScreen(
     modifier: Modifier = Modifier,
-    onNavigate: () -> Unit
+    onNavigate: () -> Unit,
+    onNavigateRegister: () -> Unit,
+    loginViewModel: LoginViewModel
 ) {
     val TAG = "BabbleLog_OnBoardScreen"
 
     var email by remember { mutableStateOf("") }
     var emailCheckLoading by remember { mutableStateOf(false) }
 
-    val loginViewModel: LoginViewModel = hiltViewModel()
     val googleSignInState = loginViewModel.googleSignInState.value
 
     val context = LocalContext.current
@@ -97,9 +98,12 @@ fun OnBoardScreen(
     LaunchedEffect(googleSignInState) {
         scope.launch {
             if (googleSignInState.result != null) {
-                CustomSharedPreference(context).setUserPrefs("email", googleSignInState.result.user?.email ?: "")
+                // email 저장하는 부분을 가입 화면 마지막 부분에서 저장해줘야 할듯
+                // -> 가입 도중 어플 나가지면 추가 정보 입력하지도 않았는데 로그인 될 것 같음
+//                CustomSharedPreference(context).setUserPrefs("email", googleSignInState.result.user?.email ?: "")
+
                 Toast.makeText(context, googleSignInState.result.user?.email ?: "", Toast.LENGTH_SHORT).show()
-                onNavigate()
+                onNavigateRegister()
             }
         }
     }

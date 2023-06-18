@@ -12,21 +12,27 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.myschoolproject.babble.presentation.view.login.FirstRegisterScreen
+import com.myschoolproject.babble.presentation.view.login.SecondRegisterScreen
 import com.myschoolproject.babble.presentation.view.onboard.OnBoardScreen
 import com.myschoolproject.babble.presentation.view.onboard.SplashScreen
+import com.myschoolproject.babble.presentation.viewmodel.LoginViewModel
 import com.myschoolproject.babble.ui.theme.MainColorTop
 
 @Composable
 fun BabbleNavigationGraph(
     navController: NavHostController,
-    onNavigate: () -> Unit
+    onNavigate: () -> Unit,
 ) {
 
     val context = LocalContext.current
     val view = LocalView.current
+
+    val loginViewModel: LoginViewModel = hiltViewModel()
 
     NavHost(navController = navController, startDestination = Routes.ONBOARD_SCREEN) {
 
@@ -41,8 +47,35 @@ fun BabbleNavigationGraph(
             // O -> HomeScreen
             // X -> LoginScreen
             OnBoardScreen(
-                onNavigate = onNavigate
+                onNavigate = onNavigate,
+                loginViewModel = loginViewModel,
+                onNavigateRegister = {
+                    navController.navigate(Routes.FIRST_REGISTER_SCREEN)
+//                    {
+//                        popUpTo(Routes.ONBOARD_SCREEN) {
+//                            inclusive = true
+//                        }
+//                    }
+                }
             )
+        }
+
+        composable(Routes.FIRST_REGISTER_SCREEN) {
+            FirstRegisterScreen(
+                loginViewModel = loginViewModel,
+                onNavigate = {
+//                    navController.navigate(Routes.SECOND_REGISTER_SCREEN) -> 휴대폰 인증 뷰 완료 시
+                    onNavigate()
+                },
+                onBackStack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(Routes.SECOND_REGISTER_SCREEN) {
+            // 휴대폰 인증 뷰
+            SecondRegisterScreen()
         }
     }
 }
