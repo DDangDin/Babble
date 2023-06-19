@@ -40,7 +40,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -58,8 +57,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun OnBoardScreen(
     modifier: Modifier = Modifier,
-    onNavigate: () -> Unit,
+    onNavigateHome: () -> Unit,
     onNavigateRegister: () -> Unit,
+    onError: () -> Unit,
     loginViewModel: LoginViewModel
 ) {
     val TAG = "BabbleLog_OnBoardScreen"
@@ -89,7 +89,8 @@ fun OnBoardScreen(
         email = CustomSharedPreference(context).getUserPrefs("email")
         delay(1500L)
         if (email.isNotEmpty()) {
-            onNavigate()
+            // 로그인 되어있는 상태
+            onNavigateHome()
         } else {
             emailCheckLoading = true
         }
@@ -98,13 +99,40 @@ fun OnBoardScreen(
     LaunchedEffect(googleSignInState) {
         scope.launch {
             if (googleSignInState.result != null) {
+                // 로그인 성공 (Firebase Auth 정보 가져옴)
+
                 // email 저장하는 부분을 가입 화면 마지막 부분에서 저장해줘야 할듯
                 // -> 가입 도중 어플 나가지면 추가 정보 입력하지도 않았는데 로그인 될 것 같음
 //                CustomSharedPreference(context).setUserPrefs("email", googleSignInState.result.user?.email ?: "")
 
-                Toast.makeText(context, googleSignInState.result.user?.email ?: "", Toast.LENGTH_SHORT).show()
-                onNavigateRegister()
+                val googleEmail = googleSignInState.result.user?.email ?: "noemail"
+                Toast.makeText(context, googleEmail, Toast.LENGTH_SHORT).show()
+                Log.d(TAG, "googleEmail: $googleEmail")
+                loginViewModel.checkAccount(googleEmail)
             }
+            if (googleSignInState.error.isNotEmpty()) {
+                onError()
+            }
+        }
+    }
+
+    LaunchedEffect(loginViewModel.checkAccountState.value) {
+        Log.d(TAG, "check 1")
+        if (loginViewModel.checkAccountState.value.data != null) {
+            Log.d(TAG, "check 2")
+            if (loginViewModel.checkAccountState.value.data!!.isExist) {
+                Log.d(TAG, "check 3")
+                CustomSharedPreference(context).setUserPrefs("email", googleSignInState.result?.user?.email ?: "noemail")
+                onNavigateHome()
+            } else {
+                Log.d(TAG, "check 4")
+                onNavigateRegister()
+                loginViewModel.checkAccountInit()
+            }
+        }
+
+        if (loginViewModel.checkAccountState.value.error.isNotEmpty()) {
+            onError()
         }
     }
 
@@ -141,7 +169,8 @@ fun OnBoardScreen(
             )
         }
 
-        if (!emailCheckLoading) {
+        // 로그인 되어있는 지 판단할 때, 이미 있는 계정인지 판단할 때 로딩 인디케이터 표시
+        if (!emailCheckLoading || loginViewModel.checkAccountState.value.loading) {
             CircularProgressIndicator(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)

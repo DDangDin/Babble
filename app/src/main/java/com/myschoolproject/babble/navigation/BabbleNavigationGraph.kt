@@ -2,12 +2,8 @@ package com.myschoolproject.babble.navigation
 
 import android.app.Activity
 import android.content.Context
-import android.graphics.Color
 import android.view.View
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -16,6 +12,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.myschoolproject.babble.presentation.view.common.ErrorScreen
 import com.myschoolproject.babble.presentation.view.login.FirstRegisterScreen
 import com.myschoolproject.babble.presentation.view.login.SecondRegisterScreen
 import com.myschoolproject.babble.presentation.view.onboard.OnBoardScreen
@@ -47,7 +44,7 @@ fun BabbleNavigationGraph(
             // O -> HomeScreen
             // X -> LoginScreen
             OnBoardScreen(
-                onNavigate = onNavigate,
+                onNavigateHome = onNavigate,
                 loginViewModel = loginViewModel,
                 onNavigateRegister = {
                     navController.navigate(Routes.FIRST_REGISTER_SCREEN)
@@ -56,6 +53,13 @@ fun BabbleNavigationGraph(
 //                            inclusive = true
 //                        }
 //                    }
+                },
+                onError = {
+                    navController.navigate(Routes.ERROR_SCREEN) {
+                        popUpTo(Routes.ONBOARD_SCREEN) {
+                            inclusive = true
+                        }
+                    }
                 }
             )
         }
@@ -68,6 +72,7 @@ fun BabbleNavigationGraph(
                     onNavigate()
                 },
                 onBackStack = {
+                    /*TODO 백스택 되었을 때 온보딩화면에서 머물게 하기*/
                     navController.popBackStack()
                 }
             )
@@ -76,6 +81,13 @@ fun BabbleNavigationGraph(
         composable(Routes.SECOND_REGISTER_SCREEN) {
             // 휴대폰 인증 뷰
             SecondRegisterScreen()
+        }
+
+        composable(Routes.ERROR_SCREEN) {
+            ErrorScreen(
+                errorMsg = loginViewModel.googleSignInState.value.error,
+                onBackStack = { navController.popBackStack() }
+            )
         }
     }
 }

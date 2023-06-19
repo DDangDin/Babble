@@ -7,4 +7,13 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="bottom_nav_click">#383838</color>
+    <color name="bottom_nav_unclick">#B4B4B4</color>
+
+    <color name="main_color_top">#EE7267</color>
+    <color name="main_color_middle">#ED606B</color> // 버튼 색 및 LikeList Icon 색
+    <color name="main_color_bottom">#EB476E</color>
+
+    <string name="alpha">#00FFFFFF</string>
 </resources>

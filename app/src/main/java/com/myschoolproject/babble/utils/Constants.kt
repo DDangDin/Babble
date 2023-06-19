@@ -3,6 +3,7 @@ package com.myschoolproject.babble.utils
 import android.app.Activity
 import android.graphics.Point
 import android.view.Display
+import androidx.compose.ui.unit.dp
 import com.myschoolproject.babble.BuildConfig
 
 object Constants {
@@ -17,4 +18,6 @@ object Constants {
         display.getSize(size)
         return size
     }
+
+    const val BABBLE_BOTTOM_BAR_PADDING = 66
 }

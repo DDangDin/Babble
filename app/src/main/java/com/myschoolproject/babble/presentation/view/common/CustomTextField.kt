@@ -24,8 +24,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.myschoolproject.babble.R
 import com.myschoolproject.babble.ui.theme.PretendardFont
+import com.myschoolproject.babble.ui.theme.TextDefault
 import com.myschoolproject.babble.ui.theme.TextFieldBackground
 import com.myschoolproject.babble.ui.theme.TextHint
+import com.myschoolproject.babble.ui.theme.TextHint2
 import com.myschoolproject.babble.ui.theme.TextRegular
 
 @Composable
@@ -50,7 +52,7 @@ fun CustomTextField(
             fontFamily = PretendardFont,
             fontWeight = FontWeight.Normal,
             fontSize = 18.sp,
-            color = TextRegular,
+            color = TextHint2,
         )
         OutlinedTextField(
             modifier = Modifier
@@ -68,7 +70,7 @@ fun CustomTextField(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 cursorColor = Color.Black,
-                textColor = TextHint
+                textColor = TextDefault
             ),
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),

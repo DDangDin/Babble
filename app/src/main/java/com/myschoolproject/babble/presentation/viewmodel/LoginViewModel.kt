@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.AuthCredential
 import com.myschoolproject.babble.data.source.remote.request.FriendReq
 import com.myschoolproject.babble.data.source.remote.request.RegisterRequest
+import com.myschoolproject.babble.data.source.remote.response.dto.CheckAccount
 import com.myschoolproject.babble.domain.repository.AuthRepository
 import com.myschoolproject.babble.domain.repository.TestRepository
 import com.myschoolproject.babble.domain.repository.UserRepository
@@ -80,13 +81,18 @@ class LoginViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    fun checkAccountInit() {
+        _checkAccountState.value = checkAccountState.value.copy(
+            data = null
+        )
+    }
     fun checkAccount(email: String) {
         viewModelScope.launch {
-            userRepository.checkAccount("mock@test.com").onEach { result ->
+            userRepository.checkAccount(email).onEach { result ->
                 when (result) {
                     is Resource.Success -> {
                         _checkAccountState.value = checkAccountState.value.copy(
-                            data = result.data,
+                            data = result.data!!,
                             loading = false
                         )
                     }
@@ -106,6 +112,10 @@ class LoginViewModel @Inject constructor(
                 }
             }.launchIn(viewModelScope)
         }
+    }
+
+    fun login(email: String = "") {
+
     }
 
     fun register() {

@@ -97,20 +97,20 @@ fun FirstRegisterScreen(
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 40.dp, top = 20.dp),
+                        .padding(start = 24.dp, top = 20.dp),
                     text = stringResource(id = R.string.register_1_title),
                     fontFamily = PretendardFont,
                     fontWeight = FontWeight.SemiBold,
-                    fontSize = 38.sp,
+                    fontSize = 30.sp,
                     color = TextBig
                 )
                 Column(
-                    modifier = Modifier.padding(top = 30.dp, bottom = 5.dp),
+                    modifier = Modifier
+                        .padding(top = 30.dp, bottom = 5.dp, start = 24.dp, end = 24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(23.dp, alignment = Alignment.CenterVertically)
                 ) {
                     CustomTextField(
-                        modifier = Modifier.padding(horizontal = 40.dp),
                         dataName = R.string.register_1_subTitle_1,
                         dataValue = loginViewModel.nickname.value,
                         onTextChanged = loginViewModel::nicknameChanged,
@@ -118,7 +118,6 @@ fun FirstRegisterScreen(
                         isEmptyValue = isEmptyValue_1
                     )
                     CustomTextField(
-                        modifier = Modifier.padding(horizontal = 40.dp),
                         dataName = R.string.register_1_subTitle_2,
                         dataValue = loginViewModel.age.value,
                         onTextChanged = loginViewModel::ageChanged,
@@ -126,7 +125,6 @@ fun FirstRegisterScreen(
                         isEmptyValue = isEmptyValue_2
                     )
                     CustomTextField(
-                        modifier = Modifier.padding(horizontal = 40.dp),
                         dataName = R.string.register_1_subTitle_3,
                         dataValue = loginViewModel.city.value,
                         onTextChanged = loginViewModel::cityChanged,
@@ -134,7 +132,6 @@ fun FirstRegisterScreen(
                         isEmptyValue = isEmptyValue_3
                     )
                     CustomTextField(
-                        modifier = Modifier.padding(horizontal = 40.dp),
                         dataName = R.string.register_1_subTitle_4,
                         dataValue = loginViewModel.gender.value,
                         onTextChanged = loginViewModel::genderChanged,
@@ -156,7 +153,7 @@ fun FirstRegisterScreen(
                 BottomBar(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 40.dp)
+                        .padding(horizontal = 24.dp)
                         .align(Alignment.BottomCenter),
                     onClick = {
                         isEmptyValue_1 = loginViewModel.nickname.value.isEmpty()
@@ -192,14 +189,6 @@ fun FirstRegisterScreenPreview() {
 //        onNavigate = {},
 //        onBackStack = {}
 //    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun TopBarPreview() {
-    TopBar() {
-
-    }
 }
 
 @Preview

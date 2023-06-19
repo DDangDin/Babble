@@ -7,7 +7,7 @@
     <string name="login_trouble_text">Trouble Signing In?</string>
 
     <!-- RegisterScreen_1 -->
-    <string name="register_1_title">추가 정보</string>
+    <string name="register_1_title">회원가입</string>
     <string name="register_1_subTitle_1">닉네임</string>
     <string name="register_1_subTitle_2">나이</string>
     <string name="register_1_subTitle_3">거주지역</string>
@@ -15,5 +15,11 @@
 
     <!-- ButtonText -->
     <string name="btn_next_text">다음</string>
+
+    <!-- ErrorScreen -->
+    <string name="error_text">Oops!</string>
+
+    <!-- TopBar Title -->
+    <string name="top_bar_title_likelist">Like 목록</string>
 
 </resources>
