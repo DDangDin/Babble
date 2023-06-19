@@ -36,7 +36,7 @@ fun HomeScreen(
                 onNavigateLikeList = {  },
                 onlyLogo = false
             )
-
+            
         }
     }
 }

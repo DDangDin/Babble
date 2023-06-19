@@ -104,7 +104,7 @@ fun RowScope.MainBottomNavigationItem(
             },
             icon = {
                 Icon(
-                    modifier = Modifier.size(24.dp),
+                    modifier = Modifier.size((24.5).dp),
                     imageVector = ImageVector.vectorResource(id = drawable),
                     contentDescription = null
                 )
