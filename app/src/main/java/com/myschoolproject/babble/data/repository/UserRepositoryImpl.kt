@@ -19,6 +19,7 @@ class UserRepositoryImpl(
     private val TAG = "BabbleLog_UserRepositoryImple"
 
     override suspend fun checkAccount(email: String): Flow<Resource<CheckAccount>> = flow {
+        Log.d("ServerCall_Log_Babble", "CheckAccount Try")
         emit(Resource.Loading())
 
         try {
@@ -41,6 +42,7 @@ class UserRepositoryImpl(
     }
 
     override suspend fun loginWithEmail(email: String): Flow<Resource<User>> = flow {
+        Log.d("ServerCall_Log_Babble", "LoginWithEmail Try")
         emit(Resource.Loading())
 
         try {
@@ -63,6 +65,7 @@ class UserRepositoryImpl(
     }
 
     override suspend fun register(registerRequest: RegisterRequest): Flow<Resource<User>> = flow {
+        Log.d("ServerCall_Log_Babble", "Register Try")
         emit(Resource.Loading())
 
         try {

@@ -18,7 +18,7 @@ class DisplayFriendsRepositoryImpl constructor(
 ): DisplayFriendsRepository {
 
     override fun getDisplayFriendsFromFirestore(): Flow<Resource<DisplayFriends>> = callbackFlow {
-        Log.d("HomeImagesState", "Firestore Get Try!!!")
+        Log.d("ServerCall_Log_Firebase", "Firestore Get")
         Resource.Loading(null)
 
         val snapshotListener = displayFriendRef.orderBy(Constants.DISPLAY_FRIENDS_ID).addSnapshotListener { snapshot, e ->
@@ -38,6 +38,7 @@ class DisplayFriendsRepositoryImpl constructor(
     }
 
     override suspend fun addDisplayFriendtoFirestore(displayFriend: DisplayFriend): Resource<Boolean> = try {
+        Log.d("ServerCall_Log_Firebase", "Firestore ADD")
         val id = displayFriendRef.document().id
         val addData = displayFriend.copy(id = id)
         displayFriendRef.document(id).set(addData).await()
@@ -47,6 +48,7 @@ class DisplayFriendsRepositoryImpl constructor(
     }
 
     override suspend fun deleteDisplayFriendtoFirestore(displayFriendId: String): Resource<Boolean> = try {
+        Log.d("ServerCall_Log_Firebase", "Firestore DELETE")
         displayFriendRef.document(displayFriendId).delete().await()
         Resource.Success(true)
     } catch (e: Exception) {

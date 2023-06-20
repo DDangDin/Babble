@@ -25,6 +25,8 @@ class MainActivity : ComponentActivity() {
 //        CustomSharedPreference(this).setUserPrefs("email", "mock@test.com")
 
         setContent {
+            
+            /*TODO 프로젝트 얼추 마무리 후 네트워크 호출 추적해보기 (ex. 쓸데 없이 중복 호출 되는 경우)*/
 
             BabbleTheme {
                 // A surface container using the 'background' color from the theme

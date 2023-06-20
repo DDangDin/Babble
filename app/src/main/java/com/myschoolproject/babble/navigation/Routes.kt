@@ -11,6 +11,8 @@ object Routes {
 
     const val ERROR_SCREEN = "error_screen"
 
+    const val LIKE_LIST_SCREEN = "like_list_screen"
+
     // bottom nav bar
     const val HOME_SCREEN = "home_screen"
     const val CHAT_SCREEN = "chat_screen"

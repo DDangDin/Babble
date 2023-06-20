@@ -9,4 +9,15 @@ data class User(
     val phoneNumber: String,
     val thumbnail: String,
     val username: String
-)
+) {
+    fun getEmptyUser(): User = User(
+        age = 0,
+        email = "",
+        friends = emptyList(),
+        gender = "",
+        nickname = "",
+        phoneNumber = "",
+        username = "",
+        thumbnail = ""
+    )
+}

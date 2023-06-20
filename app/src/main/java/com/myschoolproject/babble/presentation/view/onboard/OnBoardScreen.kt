@@ -85,6 +85,14 @@ fun OnBoardScreen(
 
     val backgroundColors = listOf(MainColorTop, MainColorBottom)
 
+    /**
+     <로그인 상태 분류>
+     1. 이미 로그인 되어 있는 경우
+     2. 로그인 되어 있지 않은 경우
+        2-1. 이미 계정이 있는 경우
+        2-2. 계정이 없는 경우
+     **/
+
     LaunchedEffect(Unit) {
         email = CustomSharedPreference(context).getUserPrefs("email")
         delay(1500L)

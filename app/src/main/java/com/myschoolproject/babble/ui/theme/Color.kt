@@ -15,6 +15,8 @@ val MainColorTop = Color(0xFFEE7267)
 val MainColorMiddle = Color(0xFFED606B) // 버튼 색 및 LikeList Icon 색
 val MainColorBottom = Color(0xFFEB476E)
 
+val WarningColor = Color(0xFFEA4343)
+
 val BabbleGreen = Color(0xFF87E786)
 
 val TextDefault = Color(0xFF2D2D2D)

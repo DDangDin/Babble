@@ -51,6 +51,7 @@ fun FirstRegisterScreen(
 ) {
 
     val userState = loginViewModel.userState.value
+    val addDisplayFriendState = loginViewModel.addDisplayFriendState.value
 
     val context = LocalContext.current
 
@@ -63,7 +64,11 @@ fun FirstRegisterScreen(
 
     LaunchedEffect(userState) {
         // 사실은 에러났을 때 처리해줘야 함
-        if (!userState.loading && userState.userData != null) {
+        if (
+            !userState.loading &&
+            userState.userData != null &&
+            addDisplayFriendState
+        ) {
             // 1. HomeActivity로 User 데이터 넘김
             // 2. 아예 HomeActivity에서 서버에 호출한 뒤 데이터 불러옴
             onNavigate()
@@ -108,7 +113,10 @@ fun FirstRegisterScreen(
                     modifier = Modifier
                         .padding(top = 30.dp, bottom = 5.dp, start = 24.dp, end = 24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(23.dp, alignment = Alignment.CenterVertically)
+                    verticalArrangement = Arrangement.spacedBy(
+                        23.dp,
+                        alignment = Alignment.CenterVertically
+                    )
                 ) {
                     CustomTextField(
                         dataName = R.string.register_1_subTitle_1,
@@ -167,7 +175,10 @@ fun FirstRegisterScreen(
                             loginViewModel.city.value.isNotEmpty() &&
                             loginViewModel.gender.value.isNotEmpty()
                         ) {
-                            CustomSharedPreference(context).setUserPrefs("email", loginViewModel.googleSignInState.value.result?.user?.email ?: "")
+                            CustomSharedPreference(context).setUserPrefs(
+                                "email",
+                                loginViewModel.googleSignInState.value.result?.user?.email ?: ""
+                            )
                             loginViewModel.register()
                         }
                     }
@@ -177,7 +188,6 @@ fun FirstRegisterScreen(
         }
     }
 }
-
 
 
 @Preview(showBackground = true)
