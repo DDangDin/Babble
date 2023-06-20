@@ -117,15 +117,14 @@ fun OnBoardScreen(
     }
 
     LaunchedEffect(loginViewModel.checkAccountState.value) {
-        Log.d(TAG, "check 1")
+        // 계정 확인
         if (loginViewModel.checkAccountState.value.data != null) {
-            Log.d(TAG, "check 2")
             if (loginViewModel.checkAccountState.value.data!!.isExist) {
-                Log.d(TAG, "check 3")
+                // 계정이 이미 있는 경우
                 CustomSharedPreference(context).setUserPrefs("email", googleSignInState.result?.user?.email ?: "noemail")
                 onNavigateHome()
             } else {
-                Log.d(TAG, "check 4")
+                // 계정이 없는 경우
                 onNavigateRegister()
                 loginViewModel.checkAccountInit()
             }

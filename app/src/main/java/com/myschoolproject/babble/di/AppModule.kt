@@ -2,13 +2,22 @@ package com.myschoolproject.babble.di
 
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.myschoolproject.babble.data.repository.AuthRepositoryImpl
+import com.myschoolproject.babble.data.repository.DisplayFriendsRepositoryImpl
 import com.myschoolproject.babble.data.repository.TestRepositoryImpl
 import com.myschoolproject.babble.data.repository.UserRepositoryImpl
 import com.myschoolproject.babble.data.source.remote.BabbleApi
 import com.myschoolproject.babble.domain.repository.AuthRepository
+import com.myschoolproject.babble.domain.repository.DisplayFriendsRepository
 import com.myschoolproject.babble.domain.repository.TestRepository
 import com.myschoolproject.babble.domain.repository.UserRepository
+import com.myschoolproject.babble.domain.use_case.display_friend_task.AddDisplayFriend
+import com.myschoolproject.babble.domain.use_case.display_friend_task.DeleteDisplayFriends
+import com.myschoolproject.babble.domain.use_case.display_friend_task.GetDisplayFriends
+import com.myschoolproject.babble.domain.use_case.display_friend_task.FirestoreUseCases
 import com.myschoolproject.babble.utils.Constants
 import dagger.Module
 import dagger.Provides
@@ -83,10 +92,33 @@ object AppModule {
         return UserRepositoryImpl(api)
     }
 
-    // Auth(Firebase)
+    // ---------------------- Firebase ----------------------
+    // Firebase - Auth
     @Provides
     @Singleton
     fun provideFirebaseAuth() = FirebaseAuth.getInstance()
+
+    // Firebase - Firestore
+    @Provides
+    @Singleton
+    fun provideDisplayFriendRef() = Firebase.firestore.collection(Constants.DISPLAY_FRIENDS)
+
+    @Provides
+    @Singleton
+    fun provideDisplayFriendsRepository(displayFriendRef: CollectionReference): DisplayFriendsRepository {
+        return DisplayFriendsRepositoryImpl(displayFriendRef)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUseCases(
+        repo: DisplayFriendsRepository
+    ) = FirestoreUseCases(
+        getDisplayFriends = GetDisplayFriends(repo),
+        addDisplayFriend = AddDisplayFriend(repo),
+        deleteDisplayFriends = DeleteDisplayFriends(repo)
+    )
+    // ---------------------- Firebase ----------------------
 
     @Provides
     @Singleton

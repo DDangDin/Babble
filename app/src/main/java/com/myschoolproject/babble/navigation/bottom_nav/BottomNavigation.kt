@@ -24,7 +24,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.myschoolproject.babble.R
 import com.myschoolproject.babble.navigation.Routes
-import com.myschoolproject.babble.utils.CustomNoRipple
+import com.myschoolproject.babble.utils.CustomThemeEffect
 
 @Composable
 fun BottomNavigation(
@@ -87,7 +87,7 @@ fun RowScope.MainBottomNavigationItem(
     @ColorRes unselectedColor: Int,
     enable: Boolean = true
 ) {
-    CompositionLocalProvider(LocalRippleTheme provides CustomNoRipple.NoRippleTheme) {
+    CompositionLocalProvider(LocalRippleTheme provides CustomThemeEffect.NoRippleTheme) {
         BottomNavigationItem(
             modifier = modifier,
             selected = selected,
