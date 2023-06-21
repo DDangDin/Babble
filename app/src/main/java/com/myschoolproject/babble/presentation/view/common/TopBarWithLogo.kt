@@ -24,7 +24,7 @@ import com.myschoolproject.babble.ui.theme.MainColorMiddle
 fun TopBarWithLogo(
     modifier: Modifier = Modifier,
     onlyLogo: Boolean,
-    onNavigateLikeList: () -> Unit,
+    onNavigateLikeList: () -> Unit = {},
     @DrawableRes icon: Int = R.drawable.ic_alpha_empty,
 ) {
 

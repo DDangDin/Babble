@@ -134,6 +134,7 @@ class LoginViewModel @Inject constructor(
     fun register() {
         val registerRequest = RegisterRequest(
             age = age.value.toInt(),
+            city = city.value,
             email = googleSignInState.value.result?.user?.email ?: "test@test.com",
             friends = emptyList(),
             gender = gender.value,

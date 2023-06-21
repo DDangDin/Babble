@@ -1,17 +1,29 @@
 package com.myschoolproject.babble.presentation.view.home
 
 import android.util.Log
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,7 +42,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     userState: UserState,
     friendsState: FriendsState,
-    onNavigateLikeList: () -> Unit
+    onNavigateLikeList: () -> Unit,
 ) {
 
     LaunchedEffect(key1 = friendsState) {
@@ -76,14 +88,8 @@ fun HomeScreen(
                 )
             } else {
                 // 사진 등록 뷰 필요
-                Text(
+                RequireProfileThumbnail(
                     modifier = Modifier.align(Alignment.Center),
-                    text = "프로필 사진을 등록 해 주세요",
-                    textAlign = TextAlign.Center,
-                    fontFamily = PretendardFont,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 25.sp,
-                    color = MainColorMiddle
                 )
             }
         }
@@ -98,4 +104,10 @@ fun HomeScreenPreview() {
         friendsState = FriendsState(),
         onNavigateLikeList = {}
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun RequireProfileThumbnailPreview() {
+    RequireProfileThumbnail()
 }

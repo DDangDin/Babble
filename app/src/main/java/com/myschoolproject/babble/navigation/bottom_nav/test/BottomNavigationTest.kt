@@ -59,7 +59,7 @@ fun BottomNavigation(
             modifier = Modifier.offset(x = (-20).dp),
             onClick = { },
             drawable = R.drawable.ic_nav_profile,
-            route = Routes.PROFILE_SCREEN,
+            route = Routes.PROFILE_SCREEN_MAIN,
             selectedColor = R.color.bottom_nav_click,
             unselectedColor = R.color.bottom_nav_unclick
         )
