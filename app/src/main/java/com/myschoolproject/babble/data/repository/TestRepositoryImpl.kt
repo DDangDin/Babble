@@ -2,7 +2,7 @@ package com.myschoolproject.babble.data.repository
 
 import android.util.Log
 import com.myschoolproject.babble.data.source.remote.BabbleApi
-import com.myschoolproject.babble.data.source.remote.response.dto.TestResponse
+import com.myschoolproject.babble.data.source.remote.response.dto.CommonResponse
 import com.myschoolproject.babble.domain.repository.TestRepository
 import com.myschoolproject.babble.utils.Resource
 import kotlinx.coroutines.flow.Flow
@@ -16,7 +16,7 @@ class TestRepositoryImpl(
 ): TestRepository {
     private val TAG = "BabbleLog_TestRepositoryImpl"
 
-    override suspend fun getTestResult(): Flow<Resource<TestResponse>> = flow {
+    override suspend fun getTestResult(): Flow<Resource<CommonResponse>> = flow {
         emit(Resource.Loading())
 
         try {

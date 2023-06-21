@@ -30,7 +30,7 @@ fun BottomNavigationGraph(
     val homeViewModel: HomeViewModel = hiltViewModel()
 
     val userState = homeViewModel.userState.value
-    val friendsState = homeViewModel.friendsState.value
+    val randomFriendsState = homeViewModel.randomFriendsState.value
 
     LaunchedEffect(Unit) {
         if (userState.userData == null) {
@@ -48,11 +48,19 @@ fun BottomNavigationGraph(
         composable(route = Routes.HOME_SCREEN) {
             HomeScreen(
                 userState = userState,
-                friendsState = friendsState,
+                randomFriendsState = randomFriendsState,
                 onNavigateLikeList = {
                     navigateSaveState(
                         navController,
                         Routes.LIKE_LIST_SCREEN
+                    )
+                },
+                updateMyProfilePhoto = { uri ->
+                    homeViewModel.updateMyProfilePhoto(userState.userData?.email ?: "", uri)
+                    CustomSharedPreference(context).setUserPrefs("user_photo", uri.toString())
+                    navigateSaveState(
+                        navController,
+                        Routes.PROFILE_SCREEN
                     )
                 }
             )
@@ -62,16 +70,14 @@ fun BottomNavigationGraph(
             ChatScreen()
         }
 
-        navigation(
-            route = Routes.PROFILE_SCREEN,
-            startDestination = Routes.PROFILE_SCREEN_MAIN
-        ) {
-
-            composable(Routes.PROFILE_SCREEN_MAIN) {
-//                ProfileScreen(
-//                    image
-//                )
-            }
+        composable(Routes.PROFILE_SCREEN) {
+            ProfileScreen(
+                userState = userState,
+                updateMyProfilePhoto = { uri ->
+                    homeViewModel.updateMyProfilePhoto(userState.userData?.email ?: "", uri)
+                    CustomSharedPreference(context).setUserPrefs("user_photo", uri.toString())
+                }
+            )
         }
         // Nav Items (end)
 

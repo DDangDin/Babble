@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.myschoolproject.babble.R
-import com.myschoolproject.babble.presentation.state.FriendsState
+import com.myschoolproject.babble.presentation.state.RandomFriendsState
 import com.myschoolproject.babble.ui.theme.BabbleGreen
 import com.myschoolproject.babble.ui.theme.MainColorMiddle
 import com.myschoolproject.babble.utils.CustomThemeEffect.shimmerEffect
@@ -49,14 +49,14 @@ import kotlinx.coroutines.launch
 @Composable
 fun SwipePagesScreen(
     modifier: Modifier = Modifier,
-    friendsState: FriendsState
+    randomFriendsState: RandomFriendsState
 ) {
     val TAG = "SwipePagesScreenLog"
 
-    val images = friendsState.images.map { it.thumbnail }
-    val nicknames = friendsState.images.map { it.nickname }
-    val ages = friendsState.images.map { it.age }
-    val cities = friendsState.images.map { it.city }
+    val images = randomFriendsState.images.map { it.thumbnail }
+    val nicknames = randomFriendsState.images.map { it.nickname }
+    val ages = randomFriendsState.images.map { it.age }
+    val cities = randomFriendsState.images.map { it.city }
 
     val context = LocalContext.current
     val pagerState = rememberPagerState()

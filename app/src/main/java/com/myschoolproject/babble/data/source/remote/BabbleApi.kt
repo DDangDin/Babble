@@ -2,7 +2,7 @@ package com.myschoolproject.babble.data.source.remote
 
 import com.myschoolproject.babble.data.source.remote.request.RegisterRequest
 import com.myschoolproject.babble.data.source.remote.response.dto.CheckAccount
-import com.myschoolproject.babble.data.source.remote.response.dto.TestResponse
+import com.myschoolproject.babble.data.source.remote.response.dto.CommonResponse
 import com.myschoolproject.babble.data.source.remote.response.dto.user.User
 import retrofit2.Call
 import retrofit2.http.Body
@@ -13,7 +13,7 @@ import retrofit2.http.Path
 interface BabbleApi {
 
     @GET("/test")
-    fun getTest(): Call<TestResponse>
+    fun getTest(): Call<CommonResponse>
 
     @GET("/api/auth/exists/email/{email}")
     fun checkAccount(
@@ -29,4 +29,10 @@ interface BabbleApi {
     fun register(
         @Body registerRequest: RegisterRequest
     ): Call<User>
+
+    @GET("/api/auth/update_thumbnail/{email}/{uri}")
+    fun updateUserThumbnail(
+        @Path("email") email: String,
+        @Path("uri") uri: String
+    ): Call<CommonResponse>
 }

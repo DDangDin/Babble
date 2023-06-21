@@ -27,22 +27,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.myschoolproject.babble.presentation.view.common.OpenPhotoPicker
 import com.myschoolproject.babble.ui.theme.MainColorMiddle
 import com.myschoolproject.babble.ui.theme.PretendardFont
 
 @Composable
 fun RequireProfileThumbnail(
     modifier: Modifier = Modifier,
+    updateMyProfilePhoto: (Uri) -> Unit
 ) {
 
-    var selectedImageUri by remember {
-        mutableStateOf<Uri?>(null)
-    }
 
     val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = { uri -> selectedImageUri = uri }
+        onResult = { uri ->
+            uri?.let {
+                updateMyProfilePhoto(uri)
+            }
+        }
     )
 
     Column(
@@ -76,9 +77,9 @@ fun RequireProfileThumbnail(
                 tint = Color.White
             )
         }
-        OpenPhotoPicker(
-            modifier = Modifier,
-            selectedImageUri = selectedImageUri
-        )
+//        OpenPhotoPicker(
+//            modifier = Modifier,
+//            selectedImageUri = selectedImageUri
+//        )
     }
 }

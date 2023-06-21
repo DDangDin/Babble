@@ -1,5 +1,6 @@
 package com.myschoolproject.babble.presentation.viewmodel
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -7,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.myschoolproject.babble.domain.repository.UserRepository
 import com.myschoolproject.babble.domain.use_case.display_friend_task.FirestoreUseCases
-import com.myschoolproject.babble.presentation.state.FriendsState
+import com.myschoolproject.babble.presentation.state.RandomFriendsState
 import com.myschoolproject.babble.presentation.state.UserState
 import com.myschoolproject.babble.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,8 +27,13 @@ class HomeViewModel @Inject constructor(
     private val _userState = mutableStateOf(UserState())
     val userState: State<UserState> = _userState
 
-    private val _friendsState = mutableStateOf(FriendsState())
-    val friendsState: State<FriendsState> = _friendsState
+    private val _randomFriendsState = mutableStateOf(RandomFriendsState())
+    val randomFriendsState: State<RandomFriendsState> = _randomFriendsState
+
+    var selectedImageUri = mutableStateOf<Uri?>(null)
+        private set
+    var updateUserThumbnail = mutableStateOf(false)
+        private set
 
     init {
         // get test dummy (firestore)
@@ -38,20 +44,20 @@ class HomeViewModel @Inject constructor(
             firebaseUseCases.getDisplayFriends.invoke().onEach { result ->
                 when (result) {
                     is Resource.Success -> {
-                        _friendsState.value = friendsState.value.copy(
+                        _randomFriendsState.value = randomFriendsState.value.copy(
                             images = result.data ?: emptyList(),
                             loading = false
                         )
                     }
 
                     is Resource.Loading -> {
-                        _friendsState.value = friendsState.value.copy(
+                        _randomFriendsState.value = randomFriendsState.value.copy(
                             loading = true
                         )
                     }
 
                     is Resource.Error -> {
-                        _friendsState.value = friendsState.value.copy(
+                        _randomFriendsState.value = randomFriendsState.value.copy(
                             error = result.message ?: "Firestore Error",
                             loading = false
                         )
@@ -75,6 +81,27 @@ class HomeViewModel @Inject constructor(
 //            }
 //        }
 
+    }
+
+    fun updateMyProfilePhoto(email: String, uri: Uri) {
+        if (email.isNotEmpty()) {
+            selectedImageUri.value = uri
+            viewModelScope.launch {
+                userRepository.updateUserThumbnail(email, uri.toString()).onEach { result ->
+                    when (result) {
+                        is Resource.Success -> {
+                            if (result.data!!.result)
+                                updateUserThumbnail.value = true
+                        }
+
+                        is Resource.Loading -> {}
+                        is Resource.Error -> {}
+                    }
+                }.launchIn(viewModelScope)
+            }
+        } else {
+            // email을 입력 받지 못해 update 할 수 없음
+        }
     }
 
     fun loginWithEmail(email: String) {

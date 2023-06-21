@@ -30,4 +30,6 @@ class CustomSharedPreference(context: Context) {
             .clear()
             .apply()
     }
+
+    fun isContain(key: String) = prefs.contains(key)
 }
