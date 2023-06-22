@@ -22,9 +22,12 @@ class LikeListViewModel @Inject constructor(
 //            if (!likeListRepository.isEmpty()) {
 //                likeList.value = likeListRepository.getLikeList()
 //            }
+
             if (likeListRepository.getLikeList().isNotEmpty()) {
                 likeList.value = likeListRepository.getLikeList()
             }
+
+//            likeListRepository.deleteLikeList()
         }
     }
 }

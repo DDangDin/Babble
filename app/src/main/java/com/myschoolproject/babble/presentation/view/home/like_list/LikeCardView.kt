@@ -61,12 +61,8 @@ fun LikeCardView(
                 modifier = Modifier
                     .size(58.dp)
                     .clip(CircleShape),
-//                model = ImageRequest.Builder(context)
-//                    .data(likeListEntity.thumbnail)
-//                    .crossfade(true)
-//                    .build(),
                 model = ImageRequest.Builder(context)
-                    .data(R.drawable.dog1)
+                    .data(likeListEntity.thumbnail)
                     .crossfade(true)
                     .build(),
                 contentDescription = "thumbnail",
