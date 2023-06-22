@@ -31,3 +31,5 @@ val IconBackColor = Color(0xFF5C5A60)
 val BottomNavItemClick = Color(0xFF383838)
 val BottomNavItemUnClick = Color(0xFFB4B4B4)
 
+val SpacerCustomColor = Color(0xFFE0E0E0)
+

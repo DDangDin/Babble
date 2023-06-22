@@ -144,7 +144,9 @@ class LoginViewModel @Inject constructor(
             username = googleSignInState.value.result?.user?.displayName ?: "",
         )
 
+        val email = googleSignInState.value.result?.user?.email ?: ""
         val displayFriend = DisplayFriend(
+            id_email = email,
             nickname = nickname.value,
             age = age.value,
             city = city.value,
@@ -153,6 +155,7 @@ class LoginViewModel @Inject constructor(
 
         viewModelScope.launch {
 
+            // 본인 프로필도 다른 사용자 들에게 랜덤 으로 보여지기 때문
             _addDisplayFriendState.value = firebaseUseCases.addDisplayFriend.invoke(displayFriend).data ?: false
 
             userRepository.register(registerRequest).onEach { result ->

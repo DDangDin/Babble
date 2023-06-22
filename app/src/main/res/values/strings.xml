@@ -22,5 +22,6 @@
     <!-- TopBar Title -->
     <string name="top_bar_title_likelist">Like 목록</string>
     <string name="title_activity_test">TestActivity</string>
+    <string name="title_activity_friends_list">FriendsList</string>
 
 </resources>

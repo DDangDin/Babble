@@ -49,6 +49,10 @@ class HomeActivity : ComponentActivity() {
                         Box(Modifier.padding(it)) {
                             BottomNavigationGraph(
                                 navController = navController,
+                                onNavigateLikeList = {
+                                    val intent = Intent(this@HomeActivity, LikeListActivity::class.java)
+                                    startActivity(intent)
+                                }
                             )
                         }
                     }

@@ -6,10 +6,14 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.myschoolproject.babble.data.source.local.entity.LikeListEntity
+import com.myschoolproject.babble.data.source.remote.response.dto.user.DisplayFriend
+import com.myschoolproject.babble.domain.repository.LikeListRepository
 import com.myschoolproject.babble.domain.repository.UserRepository
 import com.myschoolproject.babble.domain.use_case.display_friend_task.FirestoreUseCases
 import com.myschoolproject.babble.presentation.state.RandomFriendsState
 import com.myschoolproject.babble.presentation.state.UserState
+import com.myschoolproject.babble.utils.Constants.TEST_IMAGES_FROM_FIREBASE_STORAGE
 import com.myschoolproject.babble.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -20,7 +24,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val userRepository: UserRepository,
-    private val firebaseUseCases: FirestoreUseCases
+    private val firebaseUseCases: FirestoreUseCases,
+    private val likeListRepository: LikeListRepository
 ) : ViewModel() {
     private val TAG = "HomeViewModelLog"
 
@@ -33,6 +38,9 @@ class HomeViewModel @Inject constructor(
     var selectedImageUri = mutableStateOf<Uri?>(null)
         private set
     var updateUserThumbnail = mutableStateOf(false)
+        private set
+
+    var alreadyCheck = mutableStateOf(arrayOf<Boolean>())
         private set
 
     init {
@@ -48,6 +56,7 @@ class HomeViewModel @Inject constructor(
                             images = result.data ?: emptyList(),
                             loading = false
                         )
+                        alreadyCheck.value = Array(randomFriendsState.value.images.size) { false }
                     }
 
                     is Resource.Loading -> {
@@ -68,19 +77,43 @@ class HomeViewModel @Inject constructor(
         }
 
         // add test dummy (firestore)
-//        for (i in 1..10) {
+//        for (i in 0..9) {
 //            val displayFriend = DisplayFriend(
+//                id_email = "test@test_${i}.com",
 //                nickname = "nickname_$i",
 //                age = i.toString(),
 //                city = "city_$i",
-//                thumbnail = "https://firebasestorage.googleapis.com/v0/b/babble-d075c.appspot.com/o/dog1.jpg?alt=media&token=abc3e0bb-2254-45cb-8598-22f105e54b1d"
+//                thumbnail = TEST_IMAGES_FROM_FIREBASE_STORAGE[i]
 //            )
 //
 //            viewModelScope.launch {
 //                firebaseUseCases.addDisplayFriend.invoke(displayFriend).data ?: false
 //            }
 //        }
+    }
 
+    fun checkLikeAndDislike(
+        index: Int,
+        like: Boolean,
+        friend: DisplayFriend = DisplayFriend()
+    ) {
+        alreadyCheck.value[index] = true
+
+        viewModelScope.launch {
+            val entity = LikeListEntity(
+                id_email = friend.id_email,
+                age = friend.age.toInt(),
+                city = friend.city,
+                nickname = friend.nickname,
+                thumbnail = friend.thumbnail
+            )
+            if (like) {
+                likeListRepository.insertLikeLike(entity)
+            } else {
+                // 싫어요 버튼 눌렀을 때
+                // -> 사실 상 그냥 넘어감
+            }
+        }
     }
 
     fun updateMyProfilePhoto(email: String, uri: Uri) {
@@ -109,7 +142,10 @@ class HomeViewModel @Inject constructor(
             userRepository.loginWithEmail(email).onEach { result ->
                 when (result) {
                     is Resource.Success -> {
-                        Log.d(TAG, "my thumbnail: ${result.data?.thumbnail ?: "thumbnail is empty"}")
+                        Log.d(
+                            TAG,
+                            "my thumbnail: ${result.data?.thumbnail ?: "thumbnail is empty"}"
+                        )
                         _userState.value = userState.value.copy(
                             userData = result.data,
                             loading = false

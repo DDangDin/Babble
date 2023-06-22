@@ -49,7 +49,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun SwipePagesScreen(
     modifier: Modifier = Modifier,
-    randomFriendsState: RandomFriendsState
+    randomFriendsState: RandomFriendsState,
+    alreadyCheck: Array<Boolean>,
+    checkLikeAndDislike: (Int, Boolean) -> Unit
 ) {
     val TAG = "SwipePagesScreenLog"
 
@@ -141,59 +143,71 @@ fun SwipePagesScreen(
                 )
 
                 // Controller (icons)
-                Box(
-                    modifier = Modifier
-                        .offset(y = iconOffsetY)
-                        .fillMaxWidth(0.5f)
-                        .clip(RoundedCornerShape(100))
-                        .padding(8.dp)
-                        .align(Alignment.BottomCenter)
-                ) {
-                    IconButton(
-                        onClick = {
-                            scope.launch {
-                                // 싫어요를 눌렀으니 추천목록에서 삭제
-                                pagerState.animateScrollToPage(
-                                    pagerState.currentPage - 1
-                                )
-                            }
-                        },
-                        modifier = Modifier.align(Alignment.CenterStart)
+                if (!alreadyCheck[index]) {
+                    Box(
+                        modifier = Modifier
+                            .offset(y = iconOffsetY)
+                            .fillMaxWidth(0.5f)
+                            .clip(RoundedCornerShape(100))
+                            .padding(8.dp)
+                            .align(Alignment.BottomCenter)
                     ) {
-                        Icon(
-                            modifier = Modifier
-                                .size(65.dp)
-                                .graphicsLayer {
-                                    scaleX = iconImageSize
-                                    scaleY = iconImageSize
-                                },
-                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_dislike),
-                            contentDescription = "dislike",
-                            tint = MainColorMiddle
-                        )
-                    }
-                    IconButton(
-                        onClick = {
-                            // 좋아요를 눌렀으니 LikeList에 추가
-                            scope.launch {
-                                pagerState.animateScrollToPage(
-                                    pagerState.currentPage + 1
+                        IconButton(
+                            onClick = {
+                                scope.launch {
+                                    // 싫어요를 눌렀으니 추천목록에서 삭제
+                                    pagerState.animateScrollToPage(
+                                        pagerState.currentPage + 1
+                                    )
+                                }
+                                Log.d(
+                                    "RandomFriend_Dislike",
+                                    randomFriendsState.images[index].toString()
                                 )
-                            }
-                        },
-                        modifier = Modifier.align(Alignment.CenterEnd)
-                    ) {
-                        Icon(
-                            modifier = Modifier
-                                .size(65.dp)
-                                .graphicsLayer {
-                                    scaleX = iconImageSize
-                                    scaleY = iconImageSize
-                                },
-                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_like),
-                            contentDescription = "like",
-                            tint = BabbleGreen
-                        )
+                                checkLikeAndDislike(index, false)
+                            },
+                            modifier = Modifier.align(Alignment.CenterStart)
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .size(65.dp)
+                                    .graphicsLayer {
+                                        scaleX = iconImageSize
+                                        scaleY = iconImageSize
+                                    },
+                                imageVector = ImageVector.vectorResource(id = R.drawable.ic_dislike),
+                                contentDescription = "dislike",
+                                tint = MainColorMiddle
+                            )
+                        }
+                        IconButton(
+                            onClick = {
+                                // 좋아요를 눌렀으니 LikeList에 추가
+                                scope.launch {
+                                    pagerState.animateScrollToPage(
+                                        pagerState.currentPage + 1
+                                    )
+                                }
+                                Log.d(
+                                    "RandomFriend_Like",
+                                    randomFriendsState.images[index].toString()
+                                )
+                                checkLikeAndDislike(index, true)
+                            },
+                            modifier = Modifier.align(Alignment.CenterEnd)
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .size(65.dp)
+                                    .graphicsLayer {
+                                        scaleX = iconImageSize
+                                        scaleY = iconImageSize
+                                    },
+                                imageVector = ImageVector.vectorResource(id = R.drawable.ic_like),
+                                contentDescription = "like",
+                                tint = BabbleGreen
+                            )
+                        }
                     }
                 }
 

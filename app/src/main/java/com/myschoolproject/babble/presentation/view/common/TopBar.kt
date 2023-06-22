@@ -40,7 +40,7 @@ fun TopBar(
     ) {
         IconButton(
             modifier = Modifier
-                .padding(vertical = 20.dp),
+                .padding(vertical = 16.dp),
             onClick = onBackStack
         ) {
             Icon(
@@ -54,7 +54,7 @@ fun TopBar(
         }
         Text(
             modifier = Modifier
-                .padding(vertical = 20.dp),
+                .padding(vertical = 16.dp),
             text = title,
             fontFamily = PretendardFont,
             fontWeight = FontWeight.Medium,
@@ -63,7 +63,7 @@ fun TopBar(
         )
         IconButton(
             modifier = Modifier
-                .padding(vertical = 20.dp),
+                .padding(vertical = 16.dp),
             onClick = { something() },
             enabled = false
         ) {

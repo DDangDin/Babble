@@ -22,6 +22,7 @@ import com.myschoolproject.babble.utils.CustomSharedPreference
 @Composable
 fun BottomNavigationGraph(
     navController: NavHostController,
+    onNavigateLikeList: () -> Unit
 ) {
     /*TODO 나중에 스크린 전환 간 애니메이션 없애기*/
 
@@ -49,12 +50,7 @@ fun BottomNavigationGraph(
             HomeScreen(
                 userState = userState,
                 randomFriendsState = randomFriendsState,
-                onNavigateLikeList = {
-                    navigateSaveState(
-                        navController,
-                        Routes.LIKE_LIST_SCREEN
-                    )
-                },
+                onNavigateLikeList = onNavigateLikeList,
                 updateMyProfilePhoto = { uri ->
                     homeViewModel.updateMyProfilePhoto(userState.userData?.email ?: "", uri)
                     CustomSharedPreference(context).setUserPrefs("user_photo", uri.toString())
@@ -62,6 +58,10 @@ fun BottomNavigationGraph(
                         navController,
                         Routes.PROFILE_SCREEN
                     )
+                },
+                alreadyCheck = homeViewModel.alreadyCheck.value,
+                checkLikeAndDislike = { index, like ->
+                    homeViewModel.checkLikeAndDislike(index, like, randomFriendsState.images[index])
                 }
             )
         }

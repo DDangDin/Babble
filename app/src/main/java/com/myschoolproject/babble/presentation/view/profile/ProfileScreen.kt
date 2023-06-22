@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.myschoolproject.babble.R
 import com.myschoolproject.babble.data.source.remote.response.dto.user.getEmptyUser
 import com.myschoolproject.babble.presentation.state.UserState
@@ -77,7 +78,14 @@ fun ProfileScreen(
                     .size(150.dp)
                     .clip(CircleShape)
                     .border(1.dp, Color.LightGray, CircleShape),
-                model = if (userPhoto.isEmpty()) Color.LightGray else userPhoto.toUri(),
+                model = if (userPhoto.isEmpty()) {
+                    Color.LightGray
+                } else {
+                    ImageRequest.Builder(context)
+                        .data(userPhoto)
+                        .crossfade(true)
+                        .build()
+                },
                 contentDescription = "thumbnail",
                 contentScale = ContentScale.Crop
             )
@@ -99,16 +107,22 @@ fun ProfileScreen(
             Column(
                 modifier = Modifier.padding(top = 50.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(15.dp, alignment = Alignment.CenterVertically)
+                verticalArrangement = Arrangement.spacedBy(
+                    15.dp,
+                    alignment = Alignment.CenterVertically
+                )
             ) {
                 ProfileCustomButton(
                     imageVector = R.drawable.ic_setting_friends_list,
                     text = "친구목록",
-                    onClick = {  }
+                    onClick = { }
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(100.dp, alignment = Alignment.CenterHorizontally)
+                    horizontalArrangement = Arrangement.spacedBy(
+                        100.dp,
+                        alignment = Alignment.CenterHorizontally
+                    )
                 ) {
                     ProfileCustomButton(
                         imageVector = R.drawable.ic_setting_edit_profile,
@@ -122,7 +136,7 @@ fun ProfileScreen(
                     ProfileCustomButton(
                         imageVector = R.drawable.ic_setting,
                         text = "설정",
-                        onClick = {  }
+                        onClick = { }
                     )
                 }
             }

@@ -11,47 +11,50 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
-import javax.inject.Inject
 
 class DisplayFriendsRepositoryImpl constructor(
     private val displayFriendRef: CollectionReference
-): DisplayFriendsRepository {
+) : DisplayFriendsRepository {
 
     override fun getDisplayFriendsFromFirestore(): Flow<Resource<DisplayFriends>> = callbackFlow {
         Log.d("ServerCall_Log_Firebase", "Firestore Get")
         Resource.Loading(null)
 
-        val snapshotListener = displayFriendRef.orderBy(Constants.DISPLAY_FRIENDS_ID).addSnapshotListener { snapshot, e ->
-            val displayFriendsResponse = if (snapshot != null) {
-                val displayFriends = snapshot.toObjects(DisplayFriend::class.java)
-                Log.d("HomeImagesState", displayFriends[0].thumbnail)
-                Resource.Success(displayFriends)
-            } else {
-                Log.d("HomeImagesState", "Firestore Error!!!")
-                Resource.Error(e?.localizedMessage ?: "Firestore(GET data) Error")
+        val snapshotListener = displayFriendRef.orderBy(Constants.DISPLAY_FRIENDS_ID)
+            .addSnapshotListener { snapshot, e ->
+                val displayFriendsResponse = if (snapshot != null) {
+                    val displayFriends = snapshot.toObjects(DisplayFriend::class.java)
+                    Log.d("HomeImagesState", displayFriends[0].thumbnail)
+                    Resource.Success(displayFriends)
+                } else {
+                    Log.d("HomeImagesState", "Firestore Error!!!")
+                    Resource.Error(e?.localizedMessage ?: "Firestore(GET data) Error")
+                }
+                trySend(displayFriendsResponse)
             }
-            trySend(displayFriendsResponse)
-        }
         awaitClose {
             snapshotListener.remove()
         }
     }
 
-    override suspend fun addDisplayFriendtoFirestore(displayFriend: DisplayFriend): Resource<Boolean> = try {
-        Log.d("ServerCall_Log_Firebase", "Firestore ADD")
-        val id = displayFriendRef.document().id
-        val addData = displayFriend.copy(id = id)
-        displayFriendRef.document(id).set(addData).await()
-        Resource.Success(true)
-    } catch (e: Exception) {
-        Resource.Error(e.localizedMessage ?: "Firestore(ADD) Error")
-    }
+    override suspend fun addDisplayFriendtoFirestore(displayFriend: DisplayFriend): Resource<Boolean> =
+        try {
+            Log.d("ServerCall_Log_Firebase", "Firestore ADD")
+            val id = displayFriend.id_email.ifEmpty { // id_email -> email
+                displayFriendRef.document().id // 고유 id_email 값임
+            }
+            displayFriendRef.document(id).set(displayFriend).await()
+            Resource.Success(true)
+        } catch (e: Exception) {
+            Resource.Error(e.localizedMessage ?: "Firestore(ADD) Error")
+        }
 
-    override suspend fun deleteDisplayFriendtoFirestore(displayFriendId: String): Resource<Boolean> = try {
-        Log.d("ServerCall_Log_Firebase", "Firestore DELETE")
-        displayFriendRef.document(displayFriendId).delete().await()
-        Resource.Success(true)
-    } catch (e: Exception) {
-        Resource.Error(e.localizedMessage ?: "Firestore(DELETE) Error")
-    }
+    override suspend fun deleteDisplayFriendtoFirestore(displayFriendId: String): Resource<Boolean> =
+        try {
+            Log.d("ServerCall_Log_Firebase", "Firestore DELETE")
+            displayFriendRef.document(displayFriendId).delete().await()
+            Resource.Success(true)
+        } catch (e: Exception) {
+            Resource.Error(e.localizedMessage ?: "Firestore(DELETE) Error")
+        }
 }

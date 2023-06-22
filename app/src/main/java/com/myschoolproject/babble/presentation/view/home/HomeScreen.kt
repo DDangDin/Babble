@@ -29,7 +29,9 @@ fun HomeScreen(
     userState: UserState,
     randomFriendsState: RandomFriendsState,
     onNavigateLikeList: () -> Unit,
-    updateMyProfilePhoto: (Uri) -> Unit
+    updateMyProfilePhoto: (Uri) -> Unit,
+    alreadyCheck: Array<Boolean>,
+    checkLikeAndDislike: (Int, Boolean) -> Unit
 ) {
 
     val context = LocalContext.current
@@ -73,7 +75,9 @@ fun HomeScreen(
                             top = (Constants.BABBLE_BOTTOM_BAR_PADDING + 10).dp,
                             bottom = 10.dp
                         ),
-                    randomFriendsState = randomFriendsState
+                    randomFriendsState = randomFriendsState,
+                    alreadyCheck = alreadyCheck,
+                    checkLikeAndDislike = { index, like -> checkLikeAndDislike(index, like) }
                 )
                 // 이미 사진이 등록 되어 있으므로 SharedPreference에 저장
                 LaunchedEffect(Unit) {
@@ -101,7 +105,9 @@ fun HomeScreenPreview() {
         userState = UserState(loading = false),
         randomFriendsState = RandomFriendsState(),
         onNavigateLikeList = {},
-        updateMyProfilePhoto = {}
+        updateMyProfilePhoto = {},
+        alreadyCheck = Array(10) { false },
+        checkLikeAndDislike = { index, like -> }
     )
 }
 

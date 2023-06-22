@@ -29,8 +29,7 @@ fun ErrorScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         TopBar(
             Modifier
-                .align(Alignment.TopCenter)
-                .padding(start = 10.dp),
+                .align(Alignment.TopCenter),
             onBackStack = onBackStack
         )
         Column(

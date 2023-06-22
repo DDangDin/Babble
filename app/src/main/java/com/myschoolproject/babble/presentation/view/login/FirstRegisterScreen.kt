@@ -96,7 +96,6 @@ fun FirstRegisterScreen(
                 verticalArrangement = Arrangement.Center,
             ) {
                 TopBar(
-                    Modifier.padding(start = 10.dp),
                     onBackStack = onBackStack
                 )
                 Text(
