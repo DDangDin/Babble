@@ -46,4 +46,6 @@ object Constants {
     // Firebase - Firestore
     const val DISPLAY_FRIENDS = "display_friends"
     const val DISPLAY_FRIENDS_ID = "id_email"
+
+    const val FRIENDS_LIST = "firends_list"
 }

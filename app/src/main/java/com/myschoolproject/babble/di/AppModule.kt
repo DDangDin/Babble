@@ -9,6 +9,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.myschoolproject.babble.data.repository.AuthRepositoryImpl
 import com.myschoolproject.babble.data.repository.DisplayFriendsRepositoryImpl
+import com.myschoolproject.babble.data.repository.FriendsRepositoryImpl
 import com.myschoolproject.babble.data.repository.LikeListRepositoryImpl
 import com.myschoolproject.babble.data.repository.TestRepositoryImpl
 import com.myschoolproject.babble.data.repository.UserRepositoryImpl
@@ -17,13 +18,14 @@ import com.myschoolproject.babble.data.source.local.LikeListDatabase
 import com.myschoolproject.babble.data.source.remote.BabbleApi
 import com.myschoolproject.babble.domain.repository.AuthRepository
 import com.myschoolproject.babble.domain.repository.DisplayFriendsRepository
+import com.myschoolproject.babble.domain.repository.FriendsRepository
 import com.myschoolproject.babble.domain.repository.LikeListRepository
 import com.myschoolproject.babble.domain.repository.TestRepository
 import com.myschoolproject.babble.domain.repository.UserRepository
 import com.myschoolproject.babble.domain.use_case.display_friend_task.AddDisplayFriend
 import com.myschoolproject.babble.domain.use_case.display_friend_task.DeleteDisplayFriends
-import com.myschoolproject.babble.domain.use_case.display_friend_task.GetDisplayFriends
 import com.myschoolproject.babble.domain.use_case.display_friend_task.FirestoreUseCases
+import com.myschoolproject.babble.domain.use_case.display_friend_task.GetDisplayFriends
 import com.myschoolproject.babble.utils.Constants
 import dagger.Module
 import dagger.Provides
@@ -35,6 +37,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONObject
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -105,15 +108,39 @@ object AppModule {
     @Singleton
     fun provideFirebaseAuth() = FirebaseAuth.getInstance()
 
+    @Provides
+    @Singleton
+    fun provideAuthRepository(firebaseAuth: FirebaseAuth): AuthRepository {
+        return AuthRepositoryImpl(firebaseAuth)
+    }
+
     // Firebase - Firestore
     @Provides
     @Singleton
+    @Named("display_friends")
     fun provideDisplayFriendRef() = Firebase.firestore.collection(Constants.DISPLAY_FRIENDS)
 
     @Provides
     @Singleton
-    fun provideDisplayFriendsRepository(displayFriendRef: CollectionReference): DisplayFriendsRepository {
+    fun provideDisplayFriendsRepository(
+        @Named("display_friends")
+        displayFriendRef: CollectionReference
+    ): DisplayFriendsRepository {
         return DisplayFriendsRepositoryImpl(displayFriendRef)
+    }
+
+    @Provides
+    @Singleton
+    @Named("friends")
+    fun provideFriendsRef() = Firebase.firestore.collection(Constants.FRIENDS_LIST)
+
+    @Provides
+    @Singleton
+    fun provideFriendsRepository(
+        @Named("friends")
+        friendsRef: CollectionReference
+    ): FriendsRepository {
+        return FriendsRepositoryImpl(friendsRef)
     }
 
     @Provides
@@ -127,11 +154,6 @@ object AppModule {
     )
     // ---------------------- Firebase ----------------------
 
-    @Provides
-    @Singleton
-    fun provideAuthRepository(firebaseAuth: FirebaseAuth): AuthRepository {
-        return AuthRepositoryImpl(firebaseAuth)
-    }
 
     // ---------------------- Room Database ----------------------
     @Provides

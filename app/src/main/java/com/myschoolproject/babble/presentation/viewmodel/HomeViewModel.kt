@@ -7,7 +7,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.myschoolproject.babble.data.source.local.entity.LikeListEntity
-import com.myschoolproject.babble.data.source.remote.response.dto.user.DisplayFriend
+import com.myschoolproject.babble.data.source.remote.firebase.DisplayFriend
+import com.myschoolproject.babble.data.source.remote.firebase.FriendInFirebase
+import com.myschoolproject.babble.domain.repository.FriendsRepository
 import com.myschoolproject.babble.domain.repository.LikeListRepository
 import com.myschoolproject.babble.domain.repository.UserRepository
 import com.myschoolproject.babble.domain.use_case.display_friend_task.FirestoreUseCases
@@ -16,6 +18,7 @@ import com.myschoolproject.babble.presentation.state.UserState
 import com.myschoolproject.babble.utils.Constants.TEST_IMAGES_FROM_FIREBASE_STORAGE
 import com.myschoolproject.babble.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -25,7 +28,8 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val firebaseUseCases: FirestoreUseCases,
-    private val likeListRepository: LikeListRepository
+    private val likeListRepository: LikeListRepository,
+    private val friendsRepository: FriendsRepository
 ) : ViewModel() {
     private val TAG = "HomeViewModelLog"
 
@@ -44,7 +48,28 @@ class HomeViewModel @Inject constructor(
         private set
 
     init {
-        // get test dummy (firestore)
+        // test: initialize friends_list
+//        viewModelScope.launch {
+//            friendsRepository.initializeFriendsList("developmenttest924@gmail.com")
+//            for (i in 0..9) {
+//                friendsRepository.createTestDummy(
+//                    "developmenttest924@gmail.com",
+//                    friend_email = "friend_${i}@test.com",
+//                    FriendInFirebase(
+//                        chat = emptyList(),
+//                        nickname = "nickname_$i",
+//                        age = 20,
+//                        city = "",
+//                        id_email = "friend_${i}@test.com",
+//                        friend_check = i%2 == 0,
+//                        thumbnail = TEST_IMAGES_FROM_FIREBASE_STORAGE[i]
+//                    )
+//                )
+//                delay(1000L)
+//            }
+//        }
+
+        // test: get dummy (firestore)
         // -> 일단은 전부 다 가져 오게 했는데
         // 만약 실제 운영 하게 되면 랜덤 으로 몇개만 가져 오던가
         // 추천 알고리듬을 통해 몇 개씩만 가져 와서 표시 해야 함
@@ -76,7 +101,7 @@ class HomeViewModel @Inject constructor(
 
         }
 
-        // add test dummy (firestore)
+        // test: add dummy (firestore)
 //        for (i in 0..9) {
 //            val displayFriend = DisplayFriend(
 //                id_email = "test@test_${i}.com",

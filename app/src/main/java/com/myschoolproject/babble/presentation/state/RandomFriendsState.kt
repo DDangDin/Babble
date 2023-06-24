@@ -1,6 +1,6 @@
 package com.myschoolproject.babble.presentation.state
 
-import com.myschoolproject.babble.data.source.remote.response.dto.user.DisplayFriend
+import com.myschoolproject.babble.data.source.remote.firebase.DisplayFriend
 
 data class RandomFriendsState(
     val images: List<DisplayFriend> = emptyList(),

@@ -1,6 +1,7 @@
 package com.myschoolproject.babble.presentation.view.profile
 
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,6 +17,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,7 +47,8 @@ import com.myschoolproject.babble.utils.CustomSharedPreference
 fun ProfileScreen(
     modifier: Modifier = Modifier,
     userState: UserState,
-    updateMyProfilePhoto: (Uri) -> Unit
+    updateMyProfilePhoto: (Uri) -> Unit,
+    onNavigateFriendsList: () -> Unit
 ) {
 
     val context = LocalContext.current
@@ -49,13 +56,18 @@ fun ProfileScreen(
 
     // 프로필사진을 변경하면 userPhoto가 바로 변하지 않음
     // -> state 값으로 변경해야 할듯
-    val userPhoto = CustomSharedPreference(context).getUserPrefs("user_photo")
+    var userPhoto by remember { mutableStateOf("") }
+    LaunchedEffect(key1 = true) {
+        Log.d("userPhoto", userPhoto)
+        userPhoto = CustomSharedPreference(context).getUserPrefs("user_photo")
+    }
 
     val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri ->
             uri?.let {
                 updateMyProfilePhoto(uri)
+                userPhoto = uri.toString()
             }
         }
     )
@@ -115,7 +127,7 @@ fun ProfileScreen(
                 ProfileCustomButton(
                     imageVector = R.drawable.ic_setting_friends_list,
                     text = "친구목록",
-                    onClick = { }
+                    onClick = onNavigateFriendsList
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -155,6 +167,7 @@ fun ProfileScreenPreview() {
                 age = 23
             )
         ),
-        updateMyProfilePhoto = {}
+        updateMyProfilePhoto = {},
+        onNavigateFriendsList = {}
     )
 }

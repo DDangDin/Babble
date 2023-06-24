@@ -52,6 +52,10 @@ class HomeActivity : ComponentActivity() {
                                 onNavigateLikeList = {
                                     val intent = Intent(this@HomeActivity, LikeListActivity::class.java)
                                     startActivity(intent)
+                                },
+                                onNavigateFriendsList = {
+                                    val intent = Intent(this@HomeActivity, FriendsListActivity::class.java)
+                                    startActivity(intent)
                                 }
                             )
                         }

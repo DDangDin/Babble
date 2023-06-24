@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -78,6 +79,12 @@ fun FriendInfoBar(
                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_siren1),
                 contentDescription = "siren",
                 tint = WarningColor
+            )
+            Text(
+                text = "!",
+                fontSize = 25.sp,
+                textAlign = TextAlign.Center,
+                color = Color.White
             )
         }
     }

@@ -2,7 +2,7 @@ package com.myschoolproject.babble.data.repository
 
 import android.util.Log
 import com.google.firebase.firestore.CollectionReference
-import com.myschoolproject.babble.data.source.remote.response.dto.user.DisplayFriend
+import com.myschoolproject.babble.data.source.remote.firebase.DisplayFriend
 import com.myschoolproject.babble.domain.repository.DisplayFriends
 import com.myschoolproject.babble.domain.repository.DisplayFriendsRepository
 import com.myschoolproject.babble.utils.Constants

@@ -1,5 +1,6 @@
 package com.myschoolproject.babble.navigation.bottom_nav
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -10,11 +11,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navigation
 import com.myschoolproject.babble.navigation.Routes
 import com.myschoolproject.babble.presentation.view.chat.ChatScreen
 import com.myschoolproject.babble.presentation.view.home.HomeScreen
-import com.myschoolproject.babble.presentation.view.home.LikeListScreen
+import com.myschoolproject.babble.presentation.view.home.like_list.LikeListScreen
 import com.myschoolproject.babble.presentation.view.profile.ProfileScreen
 import com.myschoolproject.babble.presentation.viewmodel.HomeViewModel
 import com.myschoolproject.babble.utils.CustomSharedPreference
@@ -22,7 +22,8 @@ import com.myschoolproject.babble.utils.CustomSharedPreference
 @Composable
 fun BottomNavigationGraph(
     navController: NavHostController,
-    onNavigateLikeList: () -> Unit
+    onNavigateLikeList: () -> Unit,
+    onNavigateFriendsList: () -> Unit
 ) {
     /*TODO 나중에 스크린 전환 간 애니메이션 없애기*/
 
@@ -33,10 +34,24 @@ fun BottomNavigationGraph(
     val userState = homeViewModel.userState.value
     val randomFriendsState = homeViewModel.randomFriendsState.value
 
-    LaunchedEffect(Unit) {
+    val my_email = CustomSharedPreference(context).getUserPrefs("email")
+    val randomFriendsList_filtered = randomFriendsState.images.filter { it.id_email != my_email }
+
+    LaunchedEffect(userState) {
         if (userState.userData == null) {
             val email = CustomSharedPreference(context).getUserPrefs("email")
             homeViewModel.loginWithEmail(email)
+        } else {
+            if (!CustomSharedPreference(context).isContain("user_photo") &&
+                userState.userData.thumbnail.isNotEmpty()
+            ) {
+                // 이미 사진이 등록 되어 있으므로 SharedPreference에 저장
+                Log.d("userPhoto", "alreadyPhoto: ${userState.userData.thumbnail}")
+                CustomSharedPreference(context).setUserPrefs(
+                    "user_photo",
+                    userState.userData.thumbnail
+                )
+            }
         }
     }
 
@@ -50,6 +65,7 @@ fun BottomNavigationGraph(
             HomeScreen(
                 userState = userState,
                 randomFriendsState = randomFriendsState,
+                randomFriendsList_filtered = randomFriendsList_filtered,
                 onNavigateLikeList = onNavigateLikeList,
                 updateMyProfilePhoto = { uri ->
                     homeViewModel.updateMyProfilePhoto(userState.userData?.email ?: "", uri)
@@ -61,7 +77,7 @@ fun BottomNavigationGraph(
                 },
                 alreadyCheck = homeViewModel.alreadyCheck.value,
                 checkLikeAndDislike = { index, like ->
-                    homeViewModel.checkLikeAndDislike(index, like, randomFriendsState.images[index])
+                    homeViewModel.checkLikeAndDislike(index, like, randomFriendsList_filtered[index])
                 }
             )
         }
@@ -74,17 +90,13 @@ fun BottomNavigationGraph(
             ProfileScreen(
                 userState = userState,
                 updateMyProfilePhoto = { uri ->
-                    homeViewModel.updateMyProfilePhoto(userState.userData?.email ?: "", uri)
                     CustomSharedPreference(context).setUserPrefs("user_photo", uri.toString())
-                }
+                    homeViewModel.updateMyProfilePhoto(userState.userData?.email ?: "", uri)
+                },
+                onNavigateFriendsList = onNavigateFriendsList
             )
         }
         // Nav Items (end)
-
-
-        composable(Routes.LIKE_LIST_SCREEN) {
-            LikeListScreen(Modifier.background(Color.Black))
-        }
 
     }
 }

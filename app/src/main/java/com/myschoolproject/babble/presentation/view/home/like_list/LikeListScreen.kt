@@ -12,6 +12,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,8 +29,11 @@ import com.myschoolproject.babble.ui.theme.SpacerCustomColor
 fun LikeListScreen(
     modifier: Modifier = Modifier,
     onBackStack: () -> Unit,
-    likeList: List<LikeListEntity>
+    likeList: List<LikeListEntity>,
+    onSend: (LikeListEntity) -> Unit,
+    onDelete: (LikeListEntity) -> Unit,
 ) {
+
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -56,8 +63,12 @@ fun LikeListScreen(
                 items(likeList) { likeListEntity ->
                     LikeCardView(
                         likeListEntity = likeListEntity,
-                        onDelete = { },
-                        onSend = { }
+                        onDelete = {
+                            onDelete(likeListEntity)
+                        },
+                        onSend = {
+                            onSend(likeListEntity)
+                        }
                     )
                 }
             }
@@ -82,6 +93,8 @@ fun LikeListScreenPreview() {
     LikeListScreen(
         modifier = Modifier.fillMaxSize(),
         likeList = items,
-        onBackStack = {}
+        onBackStack = {},
+        onSend = {},
+        onDelete = {},
     )
 }

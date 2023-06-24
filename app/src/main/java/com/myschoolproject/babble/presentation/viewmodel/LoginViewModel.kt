@@ -6,8 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.AuthCredential
 import com.myschoolproject.babble.data.source.remote.request.RegisterRequest
-import com.myschoolproject.babble.data.source.remote.response.dto.user.DisplayFriend
+import com.myschoolproject.babble.data.source.remote.firebase.DisplayFriend
 import com.myschoolproject.babble.domain.repository.AuthRepository
+import com.myschoolproject.babble.domain.repository.FriendsRepository
 import com.myschoolproject.babble.domain.repository.TestRepository
 import com.myschoolproject.babble.domain.repository.UserRepository
 import com.myschoolproject.babble.domain.use_case.display_friend_task.FirestoreUseCases
@@ -25,10 +26,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val testRepository: TestRepository,
     private val userRepository: UserRepository,
     private val authRepository: AuthRepository,
-    private val firebaseUseCases: FirestoreUseCases
+    private val firebaseUseCases: FirestoreUseCases,
+    private val friendsRepository: FriendsRepository
 ) : ViewModel() {
     private val TAG = "BabbleLog_LoginViewModel"
 
@@ -157,6 +158,9 @@ class LoginViewModel @Inject constructor(
 
             // 본인 프로필도 다른 사용자 들에게 랜덤 으로 보여지기 때문
             _addDisplayFriendState.value = firebaseUseCases.addDisplayFriend.invoke(displayFriend).data ?: false
+
+            // 친구 목록 초기화
+            friendsRepository.initializeFriendsList(email)
 
             userRepository.register(registerRequest).onEach { result ->
                 when (result) {

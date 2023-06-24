@@ -1,6 +1,7 @@
 package com.myschoolproject.babble.data.source.local
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -17,6 +18,9 @@ interface LikeListDao {
 
     @Query("DELETE FROM like_list")
     suspend fun deleteLikeList()
+
+    @Delete
+    suspend fun deleteFriendFromLikeList(likeFriend: LikeListEntity)
 
     @Query("SELECT (SELECT COUNT(*) FROM like_list) == 0")
     suspend fun isEmpty(): Boolean

@@ -39,9 +39,11 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.myschoolproject.babble.R
+import com.myschoolproject.babble.data.source.remote.firebase.DisplayFriend
 import com.myschoolproject.babble.presentation.state.RandomFriendsState
 import com.myschoolproject.babble.ui.theme.BabbleGreen
 import com.myschoolproject.babble.ui.theme.MainColorMiddle
+import com.myschoolproject.babble.utils.CustomSharedPreference
 import com.myschoolproject.babble.utils.CustomThemeEffect.shimmerEffect
 import kotlinx.coroutines.launch
 
@@ -49,18 +51,20 @@ import kotlinx.coroutines.launch
 @Composable
 fun SwipePagesScreen(
     modifier: Modifier = Modifier,
-    randomFriendsState: RandomFriendsState,
+    randomFriendsList: List<DisplayFriend>,
     alreadyCheck: Array<Boolean>,
     checkLikeAndDislike: (Int, Boolean) -> Unit
 ) {
     val TAG = "SwipePagesScreenLog"
 
-    val images = randomFriendsState.images.map { it.thumbnail }
-    val nicknames = randomFriendsState.images.map { it.nickname }
-    val ages = randomFriendsState.images.map { it.age }
-    val cities = randomFriendsState.images.map { it.city }
-
     val context = LocalContext.current
+
+
+    val images = randomFriendsList.map { it.thumbnail}
+    val nicknames = randomFriendsList.map { it.nickname }
+    val ages = randomFriendsList.map { it.age }
+    val cities = randomFriendsList.map { it.city }
+
     val pagerState = rememberPagerState()
     val scope = rememberCoroutineScope()
     val matrix = remember { ColorMatrix() }
@@ -162,7 +166,7 @@ fun SwipePagesScreen(
                                 }
                                 Log.d(
                                     "RandomFriend_Dislike",
-                                    randomFriendsState.images[index].toString()
+                                    images[index]
                                 )
                                 checkLikeAndDislike(index, false)
                             },
@@ -190,7 +194,7 @@ fun SwipePagesScreen(
                                 }
                                 Log.d(
                                     "RandomFriend_Like",
-                                    randomFriendsState.images[index].toString()
+                                    images[index]
                                 )
                                 checkLikeAndDislike(index, true)
                             },

@@ -1,6 +1,7 @@
 package com.myschoolproject.babble.presentation.view.home
 
 import android.net.Uri
+import android.util.DisplayMetrics
 import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -15,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.myschoolproject.babble.data.source.remote.firebase.DisplayFriend
 import com.myschoolproject.babble.presentation.state.RandomFriendsState
 import com.myschoolproject.babble.presentation.state.UserState
 import com.myschoolproject.babble.presentation.view.common.TopBarWithLogo
@@ -28,6 +30,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     userState: UserState,
     randomFriendsState: RandomFriendsState,
+    randomFriendsList_filtered: List<DisplayFriend>,
     onNavigateLikeList: () -> Unit,
     updateMyProfilePhoto: (Uri) -> Unit,
     alreadyCheck: Array<Boolean>,
@@ -75,16 +78,10 @@ fun HomeScreen(
                             top = (Constants.BABBLE_BOTTOM_BAR_PADDING + 10).dp,
                             bottom = 10.dp
                         ),
-                    randomFriendsState = randomFriendsState,
+                    randomFriendsList = randomFriendsList_filtered,
                     alreadyCheck = alreadyCheck,
                     checkLikeAndDislike = { index, like -> checkLikeAndDislike(index, like) }
                 )
-                // 이미 사진이 등록 되어 있으므로 SharedPreference에 저장
-                LaunchedEffect(Unit) {
-                    if (!CustomSharedPreference(context).isContain("user_photo")) {
-                        CustomSharedPreference(context).setUserPrefs("user_photo", userState.userData.thumbnail)
-                    }
-                }
             } else {
                 // 사진 등록 뷰 필요
                 RequireProfileThumbnail(
@@ -107,7 +104,8 @@ fun HomeScreenPreview() {
         onNavigateLikeList = {},
         updateMyProfilePhoto = {},
         alreadyCheck = Array(10) { false },
-        checkLikeAndDislike = { index, like -> }
+        checkLikeAndDislike = { index, like -> },
+        randomFriendsList_filtered = emptyList()
     )
 }
 

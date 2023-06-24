@@ -1,4 +1,4 @@
-package com.myschoolproject.babble.data.source.remote.response.dto.user
+package com.myschoolproject.babble.data.source.remote.firebase
 
 data class DisplayFriend(
     val id_email: String = "",
