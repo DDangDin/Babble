@@ -7,8 +7,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.myschoolproject.babble.data.repository.AuthRepositoryImpl
 import com.myschoolproject.babble.data.repository.DisplayFriendsRepositoryImpl
+import com.myschoolproject.babble.data.repository.FirebaseStorageRepositoryImpl
 import com.myschoolproject.babble.data.repository.FriendsRepositoryImpl
 import com.myschoolproject.babble.data.repository.LikeListRepositoryImpl
 import com.myschoolproject.babble.data.repository.TestRepositoryImpl
@@ -18,6 +21,7 @@ import com.myschoolproject.babble.data.source.local.LikeListDatabase
 import com.myschoolproject.babble.data.source.remote.BabbleApi
 import com.myschoolproject.babble.domain.repository.AuthRepository
 import com.myschoolproject.babble.domain.repository.DisplayFriendsRepository
+import com.myschoolproject.babble.domain.repository.FirebaseStorageRepository
 import com.myschoolproject.babble.domain.repository.FriendsRepository
 import com.myschoolproject.babble.domain.repository.LikeListRepository
 import com.myschoolproject.babble.domain.repository.TestRepository
@@ -26,6 +30,7 @@ import com.myschoolproject.babble.domain.use_case.display_friend_task.AddDisplay
 import com.myschoolproject.babble.domain.use_case.display_friend_task.DeleteDisplayFriends
 import com.myschoolproject.babble.domain.use_case.display_friend_task.FirestoreUseCases
 import com.myschoolproject.babble.domain.use_case.display_friend_task.GetDisplayFriends
+import com.myschoolproject.babble.domain.use_case.display_friend_task.UpdateThumbnailForDisplay
 import com.myschoolproject.babble.utils.Constants
 import dagger.Module
 import dagger.Provides
@@ -83,7 +88,7 @@ object AppModule {
         client.addInterceptor(loggingInterceptor)
 
         return Retrofit.Builder()
-            .baseUrl(Constants.BABBLE_MOCK_API_SERVER)
+            .baseUrl(Constants.BABBLE_REAL_API_SERVER)
             .client(client.build())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -143,6 +148,17 @@ object AppModule {
         return FriendsRepositoryImpl(friendsRef)
     }
 
+    // Firebase - Storage
+    @Provides
+    @Singleton
+    fun provideFirebaseStorageRef() = FirebaseStorage.getInstance().reference
+
+    @Provides
+    @Singleton
+    fun provideFirebaseStorageRepository(storage: StorageReference): FirebaseStorageRepository {
+        return FirebaseStorageRepositoryImpl(storage)
+    }
+
     @Provides
     @Singleton
     fun provideUseCases(
@@ -150,7 +166,8 @@ object AppModule {
     ) = FirestoreUseCases(
         getDisplayFriends = GetDisplayFriends(repo),
         addDisplayFriend = AddDisplayFriend(repo),
-        deleteDisplayFriends = DeleteDisplayFriends(repo)
+        deleteDisplayFriends = DeleteDisplayFriends(repo),
+        updateThumbnailForDisplay = UpdateThumbnailForDisplay(repo)
     )
     // ---------------------- Firebase ----------------------
 

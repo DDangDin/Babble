@@ -11,7 +11,7 @@ import com.myschoolproject.babble.domain.repository.DisplayFriends
 object Constants {
 
     const val BABBLE_MOCK_API_SERVER = "https://2263e0cb-14c8-47db-ba5a-d44d6f6509a5.mock.pstmn.io"
-    const val BABBLE_REAL_API_SERVER = ""
+    const val BABBLE_REAL_API_SERVER = "https://port-0-babble-backend-7xwyjq992lljae8905.sel4.cloudtype.app/"
 
     const val GOOGLE_CLIENT_ID = BuildConfig.GOOGLE_CLIENT_ID
 

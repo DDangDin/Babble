@@ -66,6 +66,7 @@ fun ProfileScreen(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri ->
             uri?.let {
+                Log.d("photo_uri", uri.encodedAuthority.toString())
                 updateMyProfilePhoto(uri)
                 userPhoto = uri.toString()
             }

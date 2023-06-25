@@ -61,7 +61,7 @@ fun FriendsListScreen(
                 .height(1.dp)
                 .background(SpacerCustomColor)
         )
-        if (friendsList.isEmpty() || friendsListState.loading) {
+        if (friendsListState.loading) {
             CircularProgressIndicator(
                 modifier = Modifier
                     .align(alignment = Alignment.CenterHorizontally)

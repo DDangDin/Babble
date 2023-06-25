@@ -70,18 +70,20 @@ fun HomeScreen(
                     onlyLogo = false
                 )
 
-                // Include (Controller & Friend Information)
-                SwipePagesScreen(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .padding(
-                            top = (Constants.BABBLE_BOTTOM_BAR_PADDING + 10).dp,
-                            bottom = 10.dp
-                        ),
-                    randomFriendsList = randomFriendsList_filtered,
-                    alreadyCheck = alreadyCheck,
-                    checkLikeAndDislike = { index, like -> checkLikeAndDislike(index, like) }
-                )
+                if (randomFriendsList_filtered.isNotEmpty()) {
+                    // Include (Controller & Friend Information)
+                    SwipePagesScreen(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .padding(
+                                top = (Constants.BABBLE_BOTTOM_BAR_PADDING + 10).dp,
+                                bottom = 10.dp
+                            ),
+                        randomFriendsList = randomFriendsList_filtered,
+                        alreadyCheck = alreadyCheck,
+                        checkLikeAndDislike = { index, like -> checkLikeAndDislike(index, like) }
+                    )
+                }
             } else {
                 // 사진 등록 뷰 필요
                 RequireProfileThumbnail(

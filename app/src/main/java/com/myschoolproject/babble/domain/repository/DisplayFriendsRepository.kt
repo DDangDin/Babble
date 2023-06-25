@@ -16,4 +16,6 @@ interface DisplayFriendsRepository {
     suspend fun addDisplayFriendtoFirestore(displayFriend: DisplayFriend): AddDisplayFriendResponse
 
     suspend fun deleteDisplayFriendtoFirestore(displayFriendId: String): DeleteDisplayFriendResponse
+
+    suspend fun updateThumbnailForDisplay(email: String, uri: String)
 }

@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.myschoolproject.babble.data.source.local.entity.LikeListEntity
 import com.myschoolproject.babble.data.source.remote.firebase.DisplayFriend
 import com.myschoolproject.babble.data.source.remote.firebase.FriendInFirebase
+import com.myschoolproject.babble.domain.repository.FirebaseStorageRepository
 import com.myschoolproject.babble.domain.repository.FriendsRepository
 import com.myschoolproject.babble.domain.repository.LikeListRepository
 import com.myschoolproject.babble.domain.repository.UserRepository
@@ -29,7 +30,8 @@ class HomeViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val firebaseUseCases: FirestoreUseCases,
     private val likeListRepository: LikeListRepository,
-    private val friendsRepository: FriendsRepository
+    private val friendsRepository: FriendsRepository,
+    private val firebaseStorageRepository: FirebaseStorageRepository
 ) : ViewModel() {
     private val TAG = "HomeViewModelLog"
 
@@ -143,8 +145,13 @@ class HomeViewModel @Inject constructor(
 
     fun updateMyProfilePhoto(email: String, uri: Uri) {
         if (email.isNotEmpty()) {
+
             selectedImageUri.value = uri
+
             viewModelScope.launch {
+                firebaseUseCases.updateThumbnailForDisplay(email, uri.toString())
+                firebaseStorageRepository.setImage(email, uri.toString())
+
                 userRepository.updateUserThumbnail(email, uri.toString()).onEach { result ->
                     when (result) {
                         is Resource.Success -> {

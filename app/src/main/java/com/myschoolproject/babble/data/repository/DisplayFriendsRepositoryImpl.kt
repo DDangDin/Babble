@@ -24,7 +24,6 @@ class DisplayFriendsRepositoryImpl constructor(
             .addSnapshotListener { snapshot, e ->
                 val displayFriendsResponse = if (snapshot != null) {
                     val displayFriends = snapshot.toObjects(DisplayFriend::class.java)
-                    Log.d("HomeImagesState", displayFriends[0].thumbnail)
                     Resource.Success(displayFriends)
                 } else {
                     Log.d("HomeImagesState", "Firestore Error!!!")
@@ -57,4 +56,13 @@ class DisplayFriendsRepositoryImpl constructor(
         } catch (e: Exception) {
             Resource.Error(e.localizedMessage ?: "Firestore(DELETE) Error")
         }
+
+    override suspend fun updateThumbnailForDisplay(email: String, uri: String) {
+        try {
+            Log.d("ServerCall_Log_Firebase", "Firestore UPDATE")
+            displayFriendRef.document(email).update("thumbnail", uri).await()
+        } catch (e: Exception) {
+            Log.d("ServerCall_Log_Firebase", e.localizedMessage ?: "Firestore(UPDATE) Error")
+        }
+    }
 }
