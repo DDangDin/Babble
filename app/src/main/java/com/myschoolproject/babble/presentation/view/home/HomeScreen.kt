@@ -1,7 +1,6 @@
 package com.myschoolproject.babble.presentation.view.home
 
 import android.net.Uri
-import android.util.DisplayMetrics
 import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -23,7 +22,6 @@ import com.myschoolproject.babble.presentation.view.common.TopBarWithLogo
 import com.myschoolproject.babble.presentation.view.home.swipe_card.SwipePagesScreen
 import com.myschoolproject.babble.ui.theme.MainColorMiddle
 import com.myschoolproject.babble.utils.Constants
-import com.myschoolproject.babble.utils.CustomSharedPreference
 
 @Composable
 fun HomeScreen(

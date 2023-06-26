@@ -4,22 +4,28 @@ import android.content.Context
 import android.util.Log
 import androidx.room.Room
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.myschoolproject.babble.data.repository.AuthRepositoryImpl
+import com.myschoolproject.babble.data.repository.ChatRepositoryImpl
 import com.myschoolproject.babble.data.repository.DisplayFriendsRepositoryImpl
 import com.myschoolproject.babble.data.repository.FirebaseStorageRepositoryImpl
 import com.myschoolproject.babble.data.repository.FriendsRepositoryImpl
 import com.myschoolproject.babble.data.repository.LikeListRepositoryImpl
 import com.myschoolproject.babble.data.repository.TestRepositoryImpl
 import com.myschoolproject.babble.data.repository.UserRepositoryImpl
+import com.myschoolproject.babble.data.source.local.ChatDao
+import com.myschoolproject.babble.data.source.local.ChatDatabase
 import com.myschoolproject.babble.data.source.local.LikeListDao
 import com.myschoolproject.babble.data.source.local.LikeListDatabase
 import com.myschoolproject.babble.data.source.remote.BabbleApi
 import com.myschoolproject.babble.domain.repository.AuthRepository
+import com.myschoolproject.babble.domain.repository.ChatRepository
 import com.myschoolproject.babble.domain.repository.DisplayFriendsRepository
 import com.myschoolproject.babble.domain.repository.FirebaseStorageRepository
 import com.myschoolproject.babble.domain.repository.FriendsRepository
@@ -148,6 +154,18 @@ object AppModule {
         return FriendsRepositoryImpl(friendsRef)
     }
 
+//    @Provides
+//    @Singleton
+//    fun provideChatRef() = Firebase.database.reference
+
+    @Provides
+    @Singleton
+    fun provideChatRepository(
+        dao: ChatDao
+    ): ChatRepository {
+        return ChatRepositoryImpl(dao)
+    }
+
     // Firebase - Storage
     @Provides
     @Singleton
@@ -195,4 +213,19 @@ object AppModule {
     ): LikeListRepository {
         return LikeListRepositoryImpl(dao)
     }
+
+    @Provides
+    @Singleton
+    fun provideChatDatabase(@ApplicationContext context: Context): ChatDatabase {
+        return Room.databaseBuilder(
+            context.applicationContext,
+            ChatDatabase::class.java,
+            "chat_list_db"
+        )
+            .fallbackToDestructiveMigration()
+            .build()
+    }
+
+    @Provides
+    fun provideChatDao(appDatabase: ChatDatabase) = appDatabase.ChatDao()
 }

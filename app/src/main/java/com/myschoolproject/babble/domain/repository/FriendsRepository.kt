@@ -1,6 +1,7 @@
 package com.myschoolproject.babble.domain.repository
 
 import com.myschoolproject.babble.data.source.remote.firebase.FriendInFirebase
+import com.myschoolproject.babble.data.source.remote.response.dto.user.User
 import com.myschoolproject.babble.utils.Resource
 import kotlinx.coroutines.flow.Flow
 
@@ -17,11 +18,11 @@ interface FriendsRepository {
 
     fun getFriends(id_email: String): Flow<FriendsListResponse>
 
-    suspend fun addFriend(id_email: String, friend: FriendInFirebase): AddFriendResponse
+    suspend fun addFriend(user_data: FriendInFirebase, friend: FriendInFirebase): AddFriendResponse
 
     suspend fun rejectRequest(id_email: String, friend: FriendInFirebase): RejectResponse
 
-    suspend fun acceptRequest(id_email: String, friend: FriendInFirebase): AcceptResponse
+    suspend fun acceptRequest(user_data: FriendInFirebase, friend: FriendInFirebase): AcceptResponse
 
     suspend fun deleteFriend(id_email: String, friend: FriendInFirebase): DeleteFriendResponse
 

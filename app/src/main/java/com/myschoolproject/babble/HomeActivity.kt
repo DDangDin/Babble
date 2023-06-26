@@ -11,17 +11,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.myschoolproject.babble.navigation.bottom_nav.BottomNavigation
 import com.myschoolproject.babble.navigation.bottom_nav.BottomNavigationGraph
 import com.myschoolproject.babble.ui.theme.BabbleTheme
 import com.myschoolproject.babble.utils.Constants
+import com.myschoolproject.babble.utils.CustomSharedPreference
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class HomeActivity : ComponentActivity() {
@@ -56,6 +56,11 @@ class HomeActivity : ComponentActivity() {
                                 onNavigateFriendsList = {
                                     val intent = Intent(this@HomeActivity, FriendsListActivity::class.java)
                                     startActivity(intent)
+                                },
+                                onNavigateChatting = { friend_email ->
+                                    val intent = Intent(this@HomeActivity, ChatActivity::class.java)
+                                    intent.putExtra("friend_email", friend_email)
+                                    startActivity(intent)
                                 }
                             )
                         }
@@ -64,4 +69,5 @@ class HomeActivity : ComponentActivity() {
             }
         }
     }
+
 }

@@ -62,6 +62,8 @@ dependencies {
     implementation platform('androidx.compose:compose-bom:2022.10.00')
     implementation platform('androidx.compose:compose-bom:2022.10.00')
     implementation platform('androidx.compose:compose-bom:2022.10.00')
+    implementation platform('androidx.compose:compose-bom:2022.10.00')
+    androidTestImplementation platform('androidx.compose:compose-bom:2022.10.00')
     androidTestImplementation platform('androidx.compose:compose-bom:2022.10.00')
     androidTestImplementation platform('androidx.compose:compose-bom:2022.10.00')
     androidTestImplementation platform('androidx.compose:compose-bom:2022.10.00')
@@ -160,6 +162,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore-ktx'
     // Firebase - Storage
     implementation 'com.google.firebase:firebase-storage-ktx'
+    // Firebase - Realtime Databse
+    implementation 'com.google.firebase:firebase-database-ktx'
 
     // Splash API
     implementation "androidx.core:core-splashscreen:1.0.1"

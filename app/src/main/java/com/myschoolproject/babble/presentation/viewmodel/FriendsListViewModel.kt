@@ -6,7 +6,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.myschoolproject.babble.data.source.remote.firebase.FriendInFirebase
+import com.myschoolproject.babble.domain.repository.ChatRepository
 import com.myschoolproject.babble.domain.repository.FriendsRepository
+import com.myschoolproject.babble.domain.repository.UserRepository
 import com.myschoolproject.babble.presentation.state.FriendsListState
 import com.myschoolproject.babble.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,11 +19,19 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FriendsListViewModel @Inject constructor(
-    private val friendsRepository: FriendsRepository
+    private val friendsRepository: FriendsRepository,
+    private val userRepository: UserRepository,
+    private val chatRepository: ChatRepository
 ): ViewModel() {
 
     private val _friendsListState = mutableStateOf(FriendsListState())
     val friendsListState: State<FriendsListState> = _friendsListState
+
+    fun createChatRoom(friend: FriendInFirebase) {
+        viewModelScope.launch {
+            chatRepository.createChatRoom(friend)
+        }
+    }
 
     fun getFriends(id_email: String) {
         friendsRepository.getFriends(id_email).onEach { result ->
@@ -55,9 +65,21 @@ class FriendsListViewModel @Inject constructor(
         }
     }
 
-    fun addFriend(id_email: String, friend: FriendInFirebase) {
+    fun addFriend(user_data: FriendInFirebase, friend: FriendInFirebase) {
         viewModelScope.launch {
-            friendsRepository.addFriend(id_email, friend)
+            friendsRepository.addFriend(user_data, friend)
+        }
+    }
+
+    fun acceptFriend(user_data: FriendInFirebase, friend: FriendInFirebase) {
+        viewModelScope.launch {
+            friendsRepository.acceptRequest(user_data, friend)
+        }
+    }
+
+    fun rejectFriend(id_email: String, friend: FriendInFirebase) {
+        viewModelScope.launch {
+            friendsRepository.rejectRequest(id_email, friend)
         }
     }
 }

@@ -46,6 +46,7 @@ import com.myschoolproject.babble.ui.theme.MainColorMiddle
 import com.myschoolproject.babble.utils.CustomSharedPreference
 import com.myschoolproject.babble.utils.CustomThemeEffect.shimmerEffect
 import kotlinx.coroutines.launch
+import java.util.Random
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -58,7 +59,6 @@ fun SwipePagesScreen(
     val TAG = "SwipePagesScreenLog"
 
     val context = LocalContext.current
-
 
     val images = randomFriendsList.map { it.thumbnail}
     val nicknames = randomFriendsList.map { it.nickname }

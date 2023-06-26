@@ -41,14 +41,14 @@ class FriendsRepositoryImpl constructor(
         }
     }
 
-    override suspend fun addFriend(id_email: String, friend: FriendInFirebase): AddFriendResponse =
+    override suspend fun addFriend(user_data: FriendInFirebase, friend: FriendInFirebase): AddFriendResponse =
         try {
             Log.d("ServerCall_Log_Firebase(add_friend)", "Firestore add_friend")
             friendsRef
                 .document(friend.id_email)
                 .collection(Constants.FRIENDS_LIST)
-                .document(id_email)
-                .set(getEmptyFriend())
+                .document(user_data.id_email)
+                .set(user_data)
                 .await()
             Resource.Success(true)
         } catch (e: Exception) {
@@ -69,14 +69,27 @@ class FriendsRepositoryImpl constructor(
             Resource.Error(e.localizedMessage ?: "Firestore(reject_request) Error")
         }
 
-    override suspend fun acceptRequest(id_email: String, friend: FriendInFirebase): AcceptResponse =
+    override suspend fun acceptRequest(user_data: FriendInFirebase, friend: FriendInFirebase): AcceptResponse =
         try {
             Log.d("ServerCall_Log_Firebase(accept_request)", "Firestore accept_request")
             friendsRef
-                .document(id_email)
+                .document(user_data.id_email)
                 .collection(Constants.FRIENDS_LIST)
                 .document(friend.id_email)
-                .update("is_friend", true)
+                .set(
+                    friend.copy(
+                        friend_check = true
+                    )
+                )
+            friendsRef
+                .document(friend.id_email)
+                .collection(Constants.FRIENDS_LIST)
+                .document(user_data.id_email)
+                .set(
+                    user_data.copy(
+                        friend_check = true
+                    )
+                )
             Resource.Success(true)
         } catch (e: Exception) {
             Resource.Error(e.localizedMessage ?: "Firestore(accept_request) Error")

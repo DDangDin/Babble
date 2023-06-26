@@ -49,7 +49,15 @@ class LikeListActivity : ComponentActivity() {
                                 friend_check = false,
                                 chat = emptyList()
                             )
-                            friendsListViewModel.addFriend(email, friendInFirebase)
+                            val user_data = FriendInFirebase(
+                                id_email = CustomSharedPreference(context).getUserPrefs("user_data_email"),
+                                age = CustomSharedPreference(context).getUserPrefs("user_data_age")
+                                    .toInt(),
+                                city = CustomSharedPreference(context).getUserPrefs("user_data_city"),
+                                nickname = CustomSharedPreference(context).getUserPrefs("user_data_nickname"),
+                                thumbnail = CustomSharedPreference(context).getUserPrefs("user_data_thumbnail"),
+                            )
+                            friendsListViewModel.addFriend(user_data, friendInFirebase)
                             likeListViewModel.deleteFriendFromLikeList(likeListEntity)
                         },
                         onDelete = { likeListEntity ->

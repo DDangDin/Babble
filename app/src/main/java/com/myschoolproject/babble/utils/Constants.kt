@@ -6,7 +6,9 @@ import android.view.Display
 import androidx.compose.ui.unit.dp
 import com.myschoolproject.babble.BuildConfig
 import com.myschoolproject.babble.R
+import com.myschoolproject.babble.data.source.remote.firebase.DisplayFriend
 import com.myschoolproject.babble.domain.repository.DisplayFriends
+import java.util.Random
 
 object Constants {
 
@@ -14,13 +16,6 @@ object Constants {
     const val BABBLE_REAL_API_SERVER = "https://port-0-babble-backend-7xwyjq992lljae8905.sel4.cloudtype.app/"
 
     const val GOOGLE_CLIENT_ID = BuildConfig.GOOGLE_CLIENT_ID
-
-    fun getScreenSize(activity: Activity): Point {
-        val display: Display = activity.windowManager.defaultDisplay
-        val size = Point()
-        display.getSize(size)
-        return size
-    }
 
     const val BABBLE_BOTTOM_BAR_PADDING = 66
 
@@ -48,4 +43,25 @@ object Constants {
     const val DISPLAY_FRIENDS_ID = "id_email"
 
     const val FRIENDS_LIST = "firends_list"
+    const val CHAT_LIST = "chat_list"
+
+    // Util Functions
+    fun getScreenSize(activity: Activity): Point {
+        val display: Display = activity.windowManager.defaultDisplay
+        val size = Point()
+        display.getSize(size)
+        return size
+    }
+
+    fun shuffleList(list: List<DisplayFriend>): List<DisplayFriend> {
+        val random = Random(System.currentTimeMillis())
+        val shuffledList = list.toMutableList()
+        for (i in list.indices) {
+            val randomIndex = random.nextInt(list.size)
+            val temp = shuffledList[i]
+            shuffledList[i] = shuffledList[randomIndex]
+            shuffledList[randomIndex] = temp
+        }
+        return shuffledList
+    }
 }

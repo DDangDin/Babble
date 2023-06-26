@@ -3,6 +3,7 @@ package com.myschoolproject.babble.presentation.view.profile.friends_list
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -38,11 +39,14 @@ fun FriendsListScreen(
     modifier: Modifier = Modifier,
     onBackStack: () -> Unit,
     friendsListState: FriendsListState,
-    onDelete: (FriendInFirebase) -> Unit
+    onDelete: (FriendInFirebase) -> Unit,
+    addForRequest: (FriendInFirebase) -> Unit,
+    deleteForRequest: (FriendInFirebase) -> Unit,
+    createChatRoom: (FriendInFirebase) -> Unit
 ) {
 
-    val friendsList = friendsListState.friends.filter { it.id_email != "test" && it.friend_check == true }
-    val friendsRequestList_ = friendsListState.friends.filter { it.id_email != "test" && it.friend_check == false }
+    val friendsList = friendsListState.friends.filter { it.id_email != "test" }
+//    val friendsRequestList_ = friendsListState.friends.filter { it.id_email != "test" && it.friend_check == false }
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -86,6 +90,18 @@ fun FriendsListScreen(
                             onDelete = {
                                 onDelete(friend)
                             },
+                            isRequest = !friend.friend_check,
+                            addForRequest = {
+                                addForRequest(friend)
+                            },
+                            deleteForRequest = {
+                                deleteForRequest(friend)
+                            },
+                            createChatRoom = {
+                                if (friend.friend_check) {
+                                    createChatRoom(friend)
+                                }
+                            }
                         )
                     }
                 }

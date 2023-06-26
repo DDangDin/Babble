@@ -1,5 +1,6 @@
 package com.myschoolproject.babble.presentation.view.profile.friends_list
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -11,6 +12,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.ripple.LocalRippleTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,6 +50,10 @@ fun FriendCardView(
     modifier: Modifier = Modifier,
     friend: FriendInFirebase,
     onDelete: () -> Unit,
+    isRequest: Boolean,
+    deleteForRequest: () -> Unit,
+    addForRequest: () -> Unit,
+    createChatRoom: () -> Unit
 ) {
 
     val context = LocalContext.current
@@ -54,10 +61,17 @@ fun FriendCardView(
     var isLongClick by remember { mutableStateOf(false) }
 
     Row(
-        modifier = modifier.fillMaxWidth().combinedClickable(
-            onLongClick = { isLongClick = true },
-            onClick = { isLongClick = false }
-        ),
+        modifier = modifier
+            .fillMaxWidth()
+            .combinedClickable(
+                onLongClick = { isLongClick = true },
+                onClick = {
+                    if (isLongClick) {
+                        isLongClick = false
+                    }
+                    createChatRoom()
+                }
+            ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
@@ -80,7 +94,7 @@ fun FriendCardView(
                 contentScale = ContentScale.Crop
             )
             Text(
-                text = friend.nickname,
+                text = if (isRequest) "${friend.nickname}(친구요청)" else friend.nickname,
                 fontFamily = PretendardFont,
                 fontWeight = FontWeight.Light,
                 fontSize = 20.sp,
@@ -91,22 +105,47 @@ fun FriendCardView(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(
-                35.dp,
+                25.dp,
                 alignment = Alignment.CenterHorizontally
             ),
         ) {
-            if (isLongClick) {
+            if (isRequest) {
                 CompositionLocalProvider(LocalRippleTheme provides CustomThemeEffect.NoRippleTheme) {
                     IconButton(onClick = {
-                        onDelete()
-                        isLongClick = false
+                        deleteForRequest()
                     }) {
                         Icon(
-                            modifier = Modifier.size(18.dp),
-                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_block),
+                            modifier = Modifier.size(20.dp),
+                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_delete),
                             contentDescription = "block",
                             tint = Color(0xFFF86A6A)
                         )
+                    }
+                    IconButton(onClick = {
+                        addForRequest()
+                    }) {
+                        Icon(
+                            modifier = Modifier.size(35.dp),
+                            imageVector = Icons.Default.Check,
+                            contentDescription = "block",
+                            tint = Color(0xFF87E786)
+                        )
+                    }
+                }
+            } else {
+                if (isLongClick) {
+                    CompositionLocalProvider(LocalRippleTheme provides CustomThemeEffect.NoRippleTheme) {
+                        IconButton(onClick = {
+                            onDelete()
+                            isLongClick = false
+                        }) {
+                            Icon(
+                                modifier = Modifier.size(18.dp),
+                                imageVector = ImageVector.vectorResource(id = R.drawable.ic_block),
+                                contentDescription = "block",
+                                tint = Color(0xFFF86A6A)
+                            )
+                        }
                     }
                 }
             }
@@ -122,5 +161,9 @@ fun FriendCardViewPreview() {
             nickname = "워니",
         ),
         onDelete = {},
+        isRequest = true,
+        deleteForRequest = {},
+        addForRequest = {},
+        createChatRoom = {}
     )
 }

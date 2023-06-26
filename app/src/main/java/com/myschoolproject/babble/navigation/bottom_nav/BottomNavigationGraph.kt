@@ -16,6 +16,7 @@ import com.myschoolproject.babble.presentation.view.chat.ChatScreen
 import com.myschoolproject.babble.presentation.view.home.HomeScreen
 import com.myschoolproject.babble.presentation.view.home.like_list.LikeListScreen
 import com.myschoolproject.babble.presentation.view.profile.ProfileScreen
+import com.myschoolproject.babble.presentation.viewmodel.ChatViewModel
 import com.myschoolproject.babble.presentation.viewmodel.HomeViewModel
 import com.myschoolproject.babble.utils.CustomSharedPreference
 
@@ -23,13 +24,15 @@ import com.myschoolproject.babble.utils.CustomSharedPreference
 fun BottomNavigationGraph(
     navController: NavHostController,
     onNavigateLikeList: () -> Unit,
-    onNavigateFriendsList: () -> Unit
+    onNavigateFriendsList: () -> Unit,
+    onNavigateChatting: (String) -> Unit
 ) {
     /*TODO 나중에 스크린 전환 간 애니메이션 없애기*/
 
     val context = LocalContext.current
 
     val homeViewModel: HomeViewModel = hiltViewModel()
+    val chatViewModel: ChatViewModel = hiltViewModel()
 
     val userState = homeViewModel.userState.value
     val randomFriendsState = homeViewModel.randomFriendsState.value
@@ -52,7 +55,22 @@ fun BottomNavigationGraph(
                     userState.userData.thumbnail
                 )
             }
+            if (userState.userData.thumbnail != CustomSharedPreference(context).getUserPrefs("user_photo")) {
+                homeViewModel.getProfilePhoto(my_email)
+            }
+            CustomSharedPreference(context).setUserPrefs("user_data_email", userState.userData.email)
+            CustomSharedPreference(context).setUserPrefs("user_data_nickname", userState.userData.nickname)
+            CustomSharedPreference(context).setUserPrefs("user_data_age", userState.userData.age.toString())
+            CustomSharedPreference(context).setUserPrefs("user_data_city", userState.userData.city)
+            CustomSharedPreference(context).setUserPrefs("user_data_thumbnail", userState.userData.thumbnail)
         }
+    }
+
+    LaunchedEffect(key1 = homeViewModel.thumbnailState.value) {
+        CustomSharedPreference(context).setUserPrefs(
+            "user_photo",
+            homeViewModel.thumbnailState.value.toString()
+        )
     }
 
     NavHost(
@@ -83,7 +101,13 @@ fun BottomNavigationGraph(
         }
 
         composable(route = Routes.CHAT_SCREEN) {
-            ChatScreen()
+            ChatScreen(
+                chatRoom = chatViewModel.chatRoomState.value,
+                onNavigateChatting = { friend_email ->
+                    onNavigateChatting(friend_email)
+                },
+                getChatRoom = { chatViewModel.getChatRoom() }
+            )
         }
 
         composable(Routes.PROFILE_SCREEN) {
@@ -93,7 +117,13 @@ fun BottomNavigationGraph(
                     CustomSharedPreference(context).setUserPrefs("user_photo", uri.toString())
                     homeViewModel.updateMyProfilePhoto(userState.userData?.email ?: "", uri)
                 },
-                onNavigateFriendsList = onNavigateFriendsList
+                onNavigateFriendsList = {
+                    onNavigateFriendsList()
+                    navigateSaveState(
+                        navController,
+                        Routes.CHAT_SCREEN
+                    )
+                }
             )
         }
         // Nav Items (end)

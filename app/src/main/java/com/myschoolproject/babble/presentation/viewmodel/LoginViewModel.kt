@@ -22,6 +22,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -133,6 +134,9 @@ class LoginViewModel @Inject constructor(
     }
 
     fun register() {
+
+        val uuid = UUID.randomUUID().toString()
+
         val registerRequest = RegisterRequest(
             age = age.value.toInt(),
             city = city.value,
@@ -140,7 +144,7 @@ class LoginViewModel @Inject constructor(
             friends = emptyList(),
             gender = gender.value,
             nickname = nickname.value,
-            phoneNumber = phoneNumber.value.ifEmpty { "" },
+            phoneNumber = uuid,
             thumbnail = "",
             username = googleSignInState.value.result?.user?.displayName ?: "",
         )

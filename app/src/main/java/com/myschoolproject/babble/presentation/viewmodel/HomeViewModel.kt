@@ -2,6 +2,7 @@ package com.myschoolproject.babble.presentation.viewmodel
 
 import android.net.Uri
 import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -9,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.myschoolproject.babble.data.source.local.entity.LikeListEntity
 import com.myschoolproject.babble.data.source.remote.firebase.DisplayFriend
 import com.myschoolproject.babble.data.source.remote.firebase.FriendInFirebase
+import com.myschoolproject.babble.domain.repository.ChatRepository
 import com.myschoolproject.babble.domain.repository.FirebaseStorageRepository
 import com.myschoolproject.babble.domain.repository.FriendsRepository
 import com.myschoolproject.babble.domain.repository.LikeListRepository
@@ -16,10 +18,9 @@ import com.myschoolproject.babble.domain.repository.UserRepository
 import com.myschoolproject.babble.domain.use_case.display_friend_task.FirestoreUseCases
 import com.myschoolproject.babble.presentation.state.RandomFriendsState
 import com.myschoolproject.babble.presentation.state.UserState
-import com.myschoolproject.babble.utils.Constants.TEST_IMAGES_FROM_FIREBASE_STORAGE
+import com.myschoolproject.babble.utils.Constants.shuffleList
 import com.myschoolproject.babble.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -31,7 +32,7 @@ class HomeViewModel @Inject constructor(
     private val firebaseUseCases: FirestoreUseCases,
     private val likeListRepository: LikeListRepository,
     private val friendsRepository: FriendsRepository,
-    private val firebaseStorageRepository: FirebaseStorageRepository
+    private val firebaseStorageRepository: FirebaseStorageRepository,
 ) : ViewModel() {
     private val TAG = "HomeViewModelLog"
 
@@ -40,6 +41,9 @@ class HomeViewModel @Inject constructor(
 
     private val _randomFriendsState = mutableStateOf(RandomFriendsState())
     val randomFriendsState: State<RandomFriendsState> = _randomFriendsState
+
+    private val _thumbnailState: MutableState<Uri?> = mutableStateOf(null)
+    val thumbnailState: State<Uri?> = _thumbnailState
 
     var selectedImageUri = mutableStateOf<Uri?>(null)
         private set
@@ -79,8 +83,9 @@ class HomeViewModel @Inject constructor(
             firebaseUseCases.getDisplayFriends.invoke().onEach { result ->
                 when (result) {
                     is Resource.Success -> {
+                        val randomFriendsListRandom = shuffleList(result.data!!)
                         _randomFriendsState.value = randomFriendsState.value.copy(
-                            images = result.data ?: emptyList(),
+                            images = randomFriendsListRandom,
                             loading = false
                         )
                         alreadyCheck.value = Array(randomFriendsState.value.images.size) { false }
@@ -105,13 +110,7 @@ class HomeViewModel @Inject constructor(
 
         // test: add dummy (firestore)
 //        for (i in 0..9) {
-//            val displayFriend = DisplayFriend(
-//                id_email = "test@test_${i}.com",
-//                nickname = "nickname_$i",
-//                age = i.toString(),
-//                city = "city_$i",
-//                thumbnail = TEST_IMAGES_FROM_FIREBASE_STORAGE[i]
-//            )
+//            val displayFriend = TestDummy.DisplayFriendsDummy[i]
 //
 //            viewModelScope.launch {
 //                firebaseUseCases.addDisplayFriend.invoke(displayFriend).data ?: false
@@ -143,26 +142,50 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun getProfilePhoto(email: String) {
+        viewModelScope.launch {
+            firebaseStorageRepository.getImage(email).onEach { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        _thumbnailState.value = result.data!!
+                    }
+
+                    is Resource.Loading -> {}
+                    is Resource.Error -> {}
+                }
+            }.launchIn(viewModelScope)
+        }
+    }
+
     fun updateMyProfilePhoto(email: String, uri: Uri) {
         if (email.isNotEmpty()) {
 
             selectedImageUri.value = uri
 
             viewModelScope.launch {
-                firebaseUseCases.updateThumbnailForDisplay(email, uri.toString())
-                firebaseStorageRepository.setImage(email, uri.toString())
-
-                userRepository.updateUserThumbnail(email, uri.toString()).onEach { result ->
+                firebaseStorageRepository.setImage(email, uri).onEach { result ->
                     when (result) {
                         is Resource.Success -> {
-                            if (result.data!!.result)
-                                updateUserThumbnail.value = true
+                            Log.d("FirebaseStorage", "storage result ${result.data!!}")
+                            userRepository.updateUserThumbnail(email, result.data.toString()).onEach {  }.launchIn(viewModelScope)
+                            firebaseUseCases.updateThumbnailForDisplay(email, result.data.toString())
                         }
-
                         is Resource.Loading -> {}
                         is Resource.Error -> {}
                     }
                 }.launchIn(viewModelScope)
+
+//                userRepository.updateUserThumbnail(email, uri.toString()).onEach { result ->
+//                    when (result) {
+//                        is Resource.Success -> {
+//                            if (result.data!!.result)
+//                                updateUserThumbnail.value = true
+//                        }
+//
+//                        is Resource.Loading -> {}
+//                        is Resource.Error -> {}
+//                    }
+//                }.launchIn(viewModelScope)
             }
         } else {
             // email을 입력 받지 못해 update 할 수 없음
