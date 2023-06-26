@@ -53,7 +53,6 @@ class ChatActivity : ComponentActivity() {
 
                     val context = LocalContext.current
                     val chatViewModel: ChatViewModel = hiltViewModel()
-                    val chatRef = chatViewModel.chatRef
                     val chatState = chatViewModel.chatState
 
                     var chatList by remember { mutableStateOf(arrayListOf<Chat>()) }
