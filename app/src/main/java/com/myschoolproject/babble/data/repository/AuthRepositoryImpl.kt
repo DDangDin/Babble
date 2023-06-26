@@ -22,4 +22,8 @@ class AuthRepositoryImpl(
     }.catch {
         emit(Resource.Error(it.message.toString()))
     }
+
+    override fun googleLogout() {
+        firebaseAuth.signOut()
+    }
 }

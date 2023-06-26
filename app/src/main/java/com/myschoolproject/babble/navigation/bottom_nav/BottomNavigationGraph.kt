@@ -25,7 +25,8 @@ fun BottomNavigationGraph(
     navController: NavHostController,
     onNavigateLikeList: () -> Unit,
     onNavigateFriendsList: () -> Unit,
-    onNavigateChatting: (String) -> Unit
+    onNavigateChatting: (String) -> Unit,
+    onNavigateSettings: () -> Unit
 ) {
     /*TODO 나중에 스크린 전환 간 애니메이션 없애기*/
 
@@ -123,7 +124,8 @@ fun BottomNavigationGraph(
                         navController,
                         Routes.CHAT_SCREEN
                     )
-                }
+                },
+                onNavigateSettings = onNavigateSettings
             )
         }
         // Nav Items (end)

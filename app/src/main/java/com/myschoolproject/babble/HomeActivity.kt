@@ -61,6 +61,10 @@ class HomeActivity : ComponentActivity() {
                                     val intent = Intent(this@HomeActivity, ChatActivity::class.java)
                                     intent.putExtra("friend_email", friend_email)
                                     startActivity(intent)
+                                },
+                                onNavigateSettings = {
+                                    val intent = Intent(this@HomeActivity, SettingActivity::class.java)
+                                    startActivity(intent)
                                 }
                             )
                         }

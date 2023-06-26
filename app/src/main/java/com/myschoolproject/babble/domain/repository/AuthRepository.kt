@@ -8,4 +8,6 @@ import kotlinx.coroutines.flow.Flow
 interface AuthRepository {
 
     fun googleSignIn(credential: AuthCredential): Flow<Resource<AuthResult>>
+
+    fun googleLogout()
 }

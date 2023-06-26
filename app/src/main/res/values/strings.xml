@@ -24,5 +24,6 @@
     <string name="title_activity_test">TestActivity</string>
     <string name="title_activity_friends_list">FriendsList</string>
     <string name="title_activity_chat">ChatActivity</string>
+    <string name="title_activity_setting">SettingActivity</string>
 
 </resources>

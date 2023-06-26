@@ -12,6 +12,8 @@ import java.util.Random
 
 object Constants {
 
+    const val APP_VERSION = "version 1.0.0"
+
     const val BABBLE_MOCK_API_SERVER = "https://2263e0cb-14c8-47db-ba5a-d44d6f6509a5.mock.pstmn.io"
     const val BABBLE_REAL_API_SERVER = "https://port-0-babble-backend-7xwyjq992lljae8905.sel4.cloudtype.app/"
 

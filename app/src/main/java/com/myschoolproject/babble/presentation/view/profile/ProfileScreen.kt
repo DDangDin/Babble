@@ -48,7 +48,8 @@ fun ProfileScreen(
     modifier: Modifier = Modifier,
     userState: UserState,
     updateMyProfilePhoto: (Uri) -> Unit,
-    onNavigateFriendsList: () -> Unit
+    onNavigateFriendsList: () -> Unit,
+    onNavigateSettings: () -> Unit
 ) {
 
     val context = LocalContext.current
@@ -149,7 +150,7 @@ fun ProfileScreen(
                     ProfileCustomButton(
                         imageVector = R.drawable.ic_setting,
                         text = "설정",
-                        onClick = { }
+                        onClick = onNavigateSettings
                     )
                 }
             }
@@ -169,6 +170,7 @@ fun ProfileScreenPreview() {
             )
         ),
         updateMyProfilePhoto = {},
-        onNavigateFriendsList = {}
+        onNavigateFriendsList = {},
+        onNavigateSettings = {}
     )
 }
