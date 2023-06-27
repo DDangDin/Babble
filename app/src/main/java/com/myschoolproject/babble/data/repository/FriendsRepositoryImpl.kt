@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 class FriendsRepositoryImpl constructor(
-    private val friendsRef: CollectionReference
+    private val friendsRef: CollectionReference,
 ) : FriendsRepository {
 
     override fun getFriends(id_email: String): Flow<FriendsListResponse> = callbackFlow {

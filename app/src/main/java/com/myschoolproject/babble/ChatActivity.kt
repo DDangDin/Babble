@@ -17,6 +17,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,6 +36,8 @@ import com.myschoolproject.babble.presentation.viewmodel.ChatViewModel
 import com.myschoolproject.babble.ui.theme.BabbleTheme
 import com.myschoolproject.babble.utils.CustomSharedPreference
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ChatActivity : ComponentActivity() {
@@ -56,6 +59,8 @@ class ChatActivity : ComponentActivity() {
                     val chatState = chatViewModel.chatState
 
                     var chatList by remember { mutableStateOf(arrayListOf<Chat>()) }
+
+                    val coroutineScope = rememberCoroutineScope()
 
                     val email = CustomSharedPreference(context).getUserPrefs("email")
                     val friend_email = intent.getStringExtra("friend_email")
@@ -140,7 +145,6 @@ class ChatActivity : ComponentActivity() {
                         },
                         onExitRoom = {
                             chatViewModel.deleteChatRoomByEmail()
-                            chatViewModel.getChatRoom()
                             finish()
                         }
                     )

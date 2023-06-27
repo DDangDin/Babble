@@ -149,7 +149,7 @@ object AppModule {
     @Singleton
     fun provideFriendsRepository(
         @Named("friends")
-        friendsRef: CollectionReference
+        friendsRef: CollectionReference,
     ): FriendsRepository {
         return FriendsRepositoryImpl(friendsRef)
     }

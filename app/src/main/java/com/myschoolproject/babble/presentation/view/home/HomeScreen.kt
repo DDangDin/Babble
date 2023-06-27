@@ -59,42 +59,41 @@ fun HomeScreen(
                 strokeWidth = 3.dp,
                 color = MainColorMiddle
             )
-        }
-//        else {
-        Log.d("checkThumbnail", userState.userData?.thumbnail ?: "")
-        if (userState.userData != null && updateUserThumbnail) {
-            TopBarWithLogo(
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .fillMaxWidth(),
-                onNavigateLikeList = onNavigateLikeList,
-                onlyLogo = false
-            )
-
-            if (randomFriendsList_filtered.isNotEmpty()) {
-                // Include (Controller & Friend Information)
-                SwipePagesScreen(
+        } else {
+            Log.d("checkThumbnail", userState.userData?.thumbnail ?: "")
+            if (userState.userData != null && updateUserThumbnail) {
+                TopBarWithLogo(
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .padding(
-                            top = (Constants.BABBLE_BOTTOM_BAR_PADDING + 10).dp,
-                            bottom = 10.dp
-                        ),
-                    randomFriendsList = randomFriendsList_filtered,
-                    alreadyCheck = alreadyCheck,
-                    checkLikeAndDislike = { index, like -> checkLikeAndDislike(index, like) }
+                        .align(Alignment.TopCenter)
+                        .fillMaxWidth(),
+                    onNavigateLikeList = onNavigateLikeList,
+                    onlyLogo = false
+                )
+
+                if (randomFriendsList_filtered.isNotEmpty()) {
+                    // Include (Controller & Friend Information)
+                    SwipePagesScreen(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .padding(
+                                top = (Constants.BABBLE_BOTTOM_BAR_PADDING + 10).dp,
+                                bottom = 10.dp
+                            ),
+                        randomFriendsList = randomFriendsList_filtered,
+                        alreadyCheck = alreadyCheck,
+                        checkLikeAndDislike = { index, like -> checkLikeAndDislike(index, like) }
+                    )
+                }
+            } else {
+                // 사진 등록 뷰 필요
+                RequireProfileThumbnail(
+                    modifier = Modifier.align(Alignment.Center),
+                    updateMyProfilePhoto = { uri ->
+                        updateMyProfilePhoto(uri)
+                    }
                 )
             }
-        } else {
-            // 사진 등록 뷰 필요
-            RequireProfileThumbnail(
-                modifier = Modifier.align(Alignment.Center),
-                updateMyProfilePhoto = { uri ->
-                    updateMyProfilePhoto(uri)
-                }
-            )
         }
-//        }
     }
 }
 

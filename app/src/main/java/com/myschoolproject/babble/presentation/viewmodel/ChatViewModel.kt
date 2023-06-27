@@ -48,11 +48,14 @@ class ChatViewModel @Inject constructor(
         private set
 
     init {
-
+        Log.d("ChatViewModel", "Init!!")
     }
 
-    var chatRoomState = mutableStateOf(emptyList<ChatEntity>())
-        private set
+//    var chatRoomState = mutableStateOf(emptyList<ChatEntity>())
+//        private set
+
+    private val _chatRoomState = mutableStateOf(listOf<ChatEntity>())
+    val chatRoomState: State<List<ChatEntity>> = _chatRoomState
 
     fun updateChatState(chat: Chat) {
         _chatState.value.chatList.add(chat)
@@ -172,9 +175,9 @@ class ChatViewModel @Inject constructor(
     fun getChatRoom() {
         viewModelScope.launch {
             if (chatRepository.getChatRoom().isNotEmpty()) {
-                chatRoomState.value = chatRepository.getChatRoom()
+                _chatRoomState.value = chatRepository.getChatRoom()
             } else {
-                chatRoomState.value = emptyList()
+                _chatRoomState.value = emptyList()
             }
         }
     }

@@ -60,6 +60,11 @@ class FriendsListActivity : ComponentActivity() {
                         createChatRoom = { friend ->
                             friendsListViewModel.createChatRoom(friend)
                             finish()
+                        },
+                        onNavigateChatting = { friend ->
+                            val intent = Intent(this@FriendsListActivity, ChatActivity::class.java)
+                            intent.putExtra("friend_email", friend.id_email)
+                            startActivity(intent)
                         }
                     )
                 }

@@ -42,7 +42,8 @@ fun FriendsListScreen(
     onDelete: (FriendInFirebase) -> Unit,
     addForRequest: (FriendInFirebase) -> Unit,
     deleteForRequest: (FriendInFirebase) -> Unit,
-    createChatRoom: (FriendInFirebase) -> Unit
+    createChatRoom: (FriendInFirebase) -> Unit,
+    onNavigateChatting: (FriendInFirebase) -> Unit
 ) {
 
     val friendsList = friendsListState.friends.filter { it.id_email != "test" }
@@ -101,6 +102,9 @@ fun FriendsListScreen(
                                 if (friend.friend_check) {
                                     createChatRoom(friend)
                                 }
+                            },
+                            onNavigateChatting = {
+                                onNavigateChatting(friend)
                             }
                         )
                     }

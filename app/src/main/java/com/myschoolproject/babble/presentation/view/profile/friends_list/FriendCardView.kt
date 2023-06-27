@@ -53,7 +53,8 @@ fun FriendCardView(
     isRequest: Boolean,
     deleteForRequest: () -> Unit,
     addForRequest: () -> Unit,
-    createChatRoom: () -> Unit
+    createChatRoom: () -> Unit,
+    onNavigateChatting: () -> Unit
 ) {
 
     val context = LocalContext.current
@@ -70,6 +71,7 @@ fun FriendCardView(
                         isLongClick = false
                     }
                     createChatRoom()
+                    onNavigateChatting()
                 }
             ),
         verticalAlignment = Alignment.CenterVertically,
@@ -164,6 +166,7 @@ fun FriendCardViewPreview() {
         isRequest = true,
         deleteForRequest = {},
         addForRequest = {},
-        createChatRoom = {}
+        createChatRoom = {},
+        onNavigateChatting = {}
     )
 }
