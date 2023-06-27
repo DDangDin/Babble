@@ -32,7 +32,8 @@ fun HomeScreen(
     onNavigateLikeList: () -> Unit,
     updateMyProfilePhoto: (Uri) -> Unit,
     alreadyCheck: Array<Boolean>,
-    checkLikeAndDislike: (Int, Boolean) -> Unit
+    checkLikeAndDislike: (Int, Boolean) -> Unit,
+    updateUserThumbnail: Boolean
 ) {
 
     val context = LocalContext.current
@@ -58,40 +59,42 @@ fun HomeScreen(
                 strokeWidth = 3.dp,
                 color = MainColorMiddle
             )
-        } else {
-            if (userState.userData != null && userState.userData.thumbnail.isNotEmpty()) {
-                TopBarWithLogo(
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .fillMaxWidth(),
-                    onNavigateLikeList = onNavigateLikeList,
-                    onlyLogo = false
-                )
+        }
+//        else {
+        Log.d("checkThumbnail", userState.userData?.thumbnail ?: "")
+        if (userState.userData != null && updateUserThumbnail) {
+            TopBarWithLogo(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .fillMaxWidth(),
+                onNavigateLikeList = onNavigateLikeList,
+                onlyLogo = false
+            )
 
-                if (randomFriendsList_filtered.isNotEmpty()) {
-                    // Include (Controller & Friend Information)
-                    SwipePagesScreen(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .padding(
-                                top = (Constants.BABBLE_BOTTOM_BAR_PADDING + 10).dp,
-                                bottom = 10.dp
-                            ),
-                        randomFriendsList = randomFriendsList_filtered,
-                        alreadyCheck = alreadyCheck,
-                        checkLikeAndDislike = { index, like -> checkLikeAndDislike(index, like) }
-                    )
-                }
-            } else {
-                // 사진 등록 뷰 필요
-                RequireProfileThumbnail(
-                    modifier = Modifier.align(Alignment.Center),
-                    updateMyProfilePhoto = { uri ->
-                        updateMyProfilePhoto(uri)
-                    }
+            if (randomFriendsList_filtered.isNotEmpty()) {
+                // Include (Controller & Friend Information)
+                SwipePagesScreen(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .padding(
+                            top = (Constants.BABBLE_BOTTOM_BAR_PADDING + 10).dp,
+                            bottom = 10.dp
+                        ),
+                    randomFriendsList = randomFriendsList_filtered,
+                    alreadyCheck = alreadyCheck,
+                    checkLikeAndDislike = { index, like -> checkLikeAndDislike(index, like) }
                 )
             }
+        } else {
+            // 사진 등록 뷰 필요
+            RequireProfileThumbnail(
+                modifier = Modifier.align(Alignment.Center),
+                updateMyProfilePhoto = { uri ->
+                    updateMyProfilePhoto(uri)
+                }
+            )
         }
+//        }
     }
 }
 
@@ -105,7 +108,8 @@ fun HomeScreenPreview() {
         updateMyProfilePhoto = {},
         alreadyCheck = Array(10) { false },
         checkLikeAndDislike = { index, like -> },
-        randomFriendsList_filtered = emptyList()
+        randomFriendsList_filtered = emptyList(),
+        updateUserThumbnail = false
     )
 }
 

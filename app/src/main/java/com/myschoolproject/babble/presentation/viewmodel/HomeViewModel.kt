@@ -167,9 +167,15 @@ class HomeViewModel @Inject constructor(
                     when (result) {
                         is Resource.Success -> {
                             Log.d("FirebaseStorage", "storage result ${result.data!!}")
-                            userRepository.updateUserThumbnail(email, result.data.toString()).onEach {  }.launchIn(viewModelScope)
-                            firebaseUseCases.updateThumbnailForDisplay(email, result.data.toString())
+                            userRepository.updateUserThumbnail(email, result.data.toString())
+                                .onEach { }.launchIn(viewModelScope)
+                            firebaseUseCases.updateThumbnailForDisplay(
+                                email,
+                                result.data.toString()
+                            )
+                            updateUserThumbnail.value = true
                         }
+
                         is Resource.Loading -> {}
                         is Resource.Error -> {}
                     }
@@ -205,6 +211,11 @@ class HomeViewModel @Inject constructor(
                             userData = result.data,
                             loading = false
                         )
+                        result.data?.let { data ->
+                            if (data.thumbnail.isNotEmpty()) {
+                                updateUserThumbnail.value = true
+                            }
+                        }
                     }
 
                     is Resource.Loading -> {

@@ -97,7 +97,8 @@ fun BottomNavigationGraph(
                 alreadyCheck = homeViewModel.alreadyCheck.value,
                 checkLikeAndDislike = { index, like ->
                     homeViewModel.checkLikeAndDislike(index, like, randomFriendsList_filtered[index])
-                }
+                },
+                updateUserThumbnail = homeViewModel.updateUserThumbnail.value
             )
         }
 
