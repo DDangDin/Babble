@@ -1,11 +1,8 @@
 package com.myschoolproject.babble.navigation.bottom_nav
 
 import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -14,7 +11,6 @@ import androidx.navigation.compose.composable
 import com.myschoolproject.babble.navigation.Routes
 import com.myschoolproject.babble.presentation.view.chat.ChatScreen
 import com.myschoolproject.babble.presentation.view.home.HomeScreen
-import com.myschoolproject.babble.presentation.view.home.like_list.LikeListScreen
 import com.myschoolproject.babble.presentation.view.profile.ProfileScreen
 import com.myschoolproject.babble.presentation.viewmodel.ChatViewModel
 import com.myschoolproject.babble.presentation.viewmodel.HomeViewModel
@@ -26,7 +22,7 @@ fun BottomNavigationGraph(
     onNavigateLikeList: () -> Unit,
     onNavigateFriendsList: () -> Unit,
     onNavigateChatting: (String) -> Unit,
-    onNavigateSettings: () -> Unit
+    onNavigateSettings: () -> Unit,
 ) {
     /*TODO 나중에 스크린 전환 간 애니메이션 없애기*/
 
@@ -104,11 +100,13 @@ fun BottomNavigationGraph(
 
         composable(route = Routes.CHAT_SCREEN) {
             ChatScreen(
-                chatRoom = chatViewModel.chatRoomState.value,
+                chatRoomList = chatViewModel.chatRoomState.value.chatRoomList,
                 onNavigateChatting = { friend_email ->
                     onNavigateChatting(friend_email)
                 },
-                getChatRoom = { chatViewModel.getChatRoom() }
+                checkChatRoom = { chatViewModel.checkChatRoom(my_email) },
+                deleteChatRoom = { chatEntity ->
+                    chatViewModel.deleteChatRoomByEmail(my_email, chatEntity) }
             )
         }
 
@@ -121,10 +119,6 @@ fun BottomNavigationGraph(
                 },
                 onNavigateFriendsList = {
                     onNavigateFriendsList()
-                    navigateSaveState(
-                        navController,
-                        Routes.CHAT_SCREEN
-                    )
                 },
                 onNavigateSettings = onNavigateSettings
             )

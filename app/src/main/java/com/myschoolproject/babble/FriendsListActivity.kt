@@ -65,6 +65,7 @@ class FriendsListActivity : ComponentActivity() {
                             val intent = Intent(this@FriendsListActivity, ChatActivity::class.java)
                             intent.putExtra("friend_email", friend.id_email)
                             startActivity(intent)
+//                            val aViewModel = ViewModelProvider(this)[ChatViewModel::class.java]
                         }
                     )
                 }

@@ -5,6 +5,8 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.myschoolproject.babble.data.source.remote.firebase.FriendInFirebase
 import com.myschoolproject.babble.domain.repository.ChatRepository
 import com.myschoolproject.babble.domain.repository.FriendsRepository
@@ -26,6 +28,8 @@ class FriendsListViewModel @Inject constructor(
 
     private val _friendsListState = mutableStateOf(FriendsListState())
     val friendsListState: State<FriendsListState> = _friendsListState
+
+    var chatRef = Firebase.database.reference
 
     fun createChatRoom(friend: FriendInFirebase) {
         viewModelScope.launch {

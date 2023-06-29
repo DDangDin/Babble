@@ -1,10 +1,7 @@
 package com.myschoolproject.babble.presentation.view.profile.friends_list
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,7 +34,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.myschoolproject.babble.R
-import com.myschoolproject.babble.data.source.local.entity.LikeListEntity
 import com.myschoolproject.babble.data.source.remote.firebase.FriendInFirebase
 import com.myschoolproject.babble.data.source.remote.firebase.getEmptyFriend
 import com.myschoolproject.babble.ui.theme.PretendardFont

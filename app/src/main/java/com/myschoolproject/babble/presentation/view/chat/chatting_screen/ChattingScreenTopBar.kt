@@ -89,20 +89,20 @@ fun ChattingScreenTopBar(
                     tint = TextBig
                 )
             }
-            IconButton(
-                modifier = Modifier
-                    .padding(vertical = 16.dp),
-                onClick = onExitRoom
-            ) {
-                Icon(
-                    modifier = Modifier
-                        .width(26.dp)
-                        .height(23.dp),
-                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_exit),
-                    contentDescription = "back",
-                    tint = TextBig
-                )
-            }
+//            IconButton(
+//                modifier = Modifier
+//                    .padding(vertical = 16.dp),
+//                onClick = onExitRoom
+//            ) {
+//                Icon(
+//                    modifier = Modifier
+//                        .width(26.dp)
+//                        .height(23.dp),
+//                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_exit),
+//                    contentDescription = "back",
+//                    tint = TextBig
+//                )
+//            }
         }
     }
 }

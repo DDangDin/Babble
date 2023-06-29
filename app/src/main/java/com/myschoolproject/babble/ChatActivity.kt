@@ -1,9 +1,12 @@
 package com.myschoolproject.babble
 
+import android.app.Application
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -53,12 +57,12 @@ class ChatActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-
                     val context = LocalContext.current
+                    // ChatScreen 에서의 ChatViewModel 과는 다른 인스턴스
                     val chatViewModel: ChatViewModel = hiltViewModel()
                     val chatState = chatViewModel.chatState
 
-                    var chatList by remember { mutableStateOf(arrayListOf<Chat>()) }
+//                    var chatList by remember { mutableStateOf(arrayListOf<Chat>()) }
 
                     val coroutineScope = rememberCoroutineScope()
 
@@ -71,70 +75,13 @@ class ChatActivity : ComponentActivity() {
                         Log.d(TAG, "getAllChat")
                     }
 
-//                    if (friend_email != null) {
-//                        val id_email2 = email.split("@")[0]
-//                        val friend_email2 = friend_email.split("@")[0]
-//
-//                        if (!chatRef.child("${id_email2}-${friend_email2}").key.isNullOrEmpty()) {
-//                            chatRef.child("${id_email2}-${friend_email2}").orderByKey().limitToLast(1)
-//                                .addChildEventListener(object : ChildEventListener {
-//                                    override fun onChildAdded(
-//                                        snapshot: DataSnapshot,
-//                                        previousChildName: String?
-//                                    ) {
-//                                        chatViewModel.updateChatState(
-//                                            Chat(
-//                                                email = snapshot.getValue(Chat::class.java)!!.email,
-//                                                message = snapshot.getValue(Chat::class.java)!!.message
-//                                            )
-//                                        )
-//                                    }
-//
-//                                    override fun onChildChanged(
-//                                        snapshot: DataSnapshot,
-//                                        previousChildName: String?
-//                                    ) {
-////                                        chatList.add(Chat(
-////                                            email = snapshot.getValue(Chat::class.java)!!.email,
-////                                            message = snapshot.getValue(Chat::class.java)!!.message
-////                                        ))
-////                                        Log.d(TAG, "chatList: ${snapshot.getValue(Chat::class.java)!!.message}")
-//                                    }
-//
-//                                    override fun onChildRemoved(snapshot: DataSnapshot) {
-//
-//                                    }
-//
-//                                    override fun onChildMoved(
-//                                        snapshot: DataSnapshot,
-//                                        previousChildName: String?
-//                                    ) {
-//
-//                                    }
-//
-//                                    override fun onCancelled(error: DatabaseError) {
-//
-//                                    }
-//                                })
-//                        } else {
-//                            chatRef.child("${friend_email2}-${id_email2}")
-//                                .addListenerForSingleValueEvent(object : ValueEventListener {
-//                                    override fun onDataChange(snapshot: DataSnapshot) {
-//
-//                                    }
-//
-//                                    override fun onCancelled(error: DatabaseError) {}
-//                                })
-//                        }
+//                    if (chatState.value.chatList.isNotEmpty()) {
+//                        chatList = chatState.value.chatList
 //                    }
-
-                    if (chatState.value.chatList.isNotEmpty()) {
-                        chatList = chatState.value.chatList
-                    }
 
                     ChattingScreen(
                         onBackStack = { finish() },
-                        chatList = chatList,
+                        chatState = chatState.value,
                         friendData = chatViewModel.friendData.value,
                         inputMessage = chatViewModel.inputMessage.value,
                         inputMessageChanged = chatViewModel::inputMessageChanged,
@@ -144,9 +91,9 @@ class ChatActivity : ComponentActivity() {
                             chatViewModel.inputMessageFinished()
                         },
                         onExitRoom = {
-                            chatViewModel.deleteChatRoomByEmail()
-                            finish()
-                        }
+//                            chatViewModel.deleteChatRoomByEmail()
+//                            finish()
+                        },
                     )
                 }
             }
