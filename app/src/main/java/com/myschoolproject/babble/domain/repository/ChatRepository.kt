@@ -13,7 +13,7 @@ interface ChatRepository {
 
     suspend fun getChatRoom(): List<ChatEntity>
 
-    suspend fun deleteChatRoom(friend: ChatEntity)
+    suspend fun deleteChatRoom(friend: ChatEntity): Flow<Resource<Boolean>>
 
 
     // Chat Message

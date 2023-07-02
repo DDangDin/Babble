@@ -100,7 +100,7 @@ fun BottomNavigationGraph(
 
         composable(route = Routes.CHAT_SCREEN) {
             ChatScreen(
-                chatRoomList = chatViewModel.chatRoomState.value.chatRoomList,
+                chatRoomListState = chatViewModel.chatRoomState.value,
                 onNavigateChatting = { friend_email ->
                     onNavigateChatting(friend_email)
                 },

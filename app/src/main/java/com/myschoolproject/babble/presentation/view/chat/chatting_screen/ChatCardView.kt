@@ -91,7 +91,7 @@ fun ChatCardView(
                     fontWeight = FontWeight.Light,
                     fontSize = 17.sp,
                     color = textColor,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Start
                 )
             }
         }

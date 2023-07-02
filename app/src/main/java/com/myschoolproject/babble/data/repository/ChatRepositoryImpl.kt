@@ -35,8 +35,14 @@ class ChatRepositoryImpl(
 
     override suspend fun getChatRoom(): List<ChatEntity> = dao.getChatList()
 
-    override suspend fun deleteChatRoom(friend: ChatEntity) {
-        dao.deleteRoomFromChatList(friend)
+    override suspend fun deleteChatRoom(friend: ChatEntity): Flow<Resource<Boolean>> = flow {
+        try {
+            emit(Resource.Loading())
+            dao.deleteRoomFromChatList(friend)
+            emit(Resource.Success(true))
+        } catch (e: Exception) {
+            emit(Resource.Error(e.localizedMessage ?: "DB Control Error"))
+        }
     }
 
     // Chat Message

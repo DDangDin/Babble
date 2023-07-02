@@ -9,18 +9,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.myschoolproject.babble.data.source.local.entity.ChatEntity
+import com.myschoolproject.babble.presentation.state.ChatRoomListState
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ChatScreen(
     modifier: Modifier = Modifier,
-    chatRoomList: List<ChatEntity>,
+    chatRoomListState: ChatRoomListState,
     onNavigateChatting: (String) -> Unit,
     checkChatRoom: () -> Unit,
     deleteChatRoom: (ChatEntity) -> Unit
@@ -31,13 +34,13 @@ fun ChatScreen(
         checkChatRoom()
     }
 
+    val chatRoomList = chatRoomListState.chatRoomList
+
 //    val chatRoomList_filterd = if (chatRoomList.isNotEmpty()) {
 //        chatRoomList.filter { it.friend_nickname.isNotEmpty() }
 //    } else {
 //        emptyList()
 //    }
-
-    val chatRoomList_filterd = chatRoomList
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -48,7 +51,7 @@ fun ChatScreen(
             modifier = Modifier.fillMaxWidth(),
             title = "채팅 목록"
         )
-        if (chatRoomList_filterd.isNotEmpty()) {
+        if (!chatRoomListState.loading) {
             LazyColumn(
                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -57,7 +60,7 @@ fun ChatScreen(
                     alignment = Alignment.CenterVertically
                 ),
             ) {
-                items(chatRoomList_filterd) { chatEntity ->
+                items(chatRoomList) { chatEntity ->
                     ChatListCardView(
                         modifier = Modifier,
                         chatEntity = chatEntity,
@@ -68,6 +71,8 @@ fun ChatScreen(
                     )
                 }
             }
+        } else {
+            CircularProgressIndicator(color = Color.Transparent)
         }
     }
 }

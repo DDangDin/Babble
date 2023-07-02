@@ -15,12 +15,15 @@ import com.myschoolproject.babble.data.source.local.entity.ChatEntity
 import com.myschoolproject.babble.data.source.remote.firebase.Chat
 import com.myschoolproject.babble.data.source.remote.firebase.FriendInFirebase
 import com.myschoolproject.babble.domain.repository.ChatRepository
+import com.myschoolproject.babble.domain.repository.ChattingRepository
 import com.myschoolproject.babble.domain.repository.FriendsRepository
 import com.myschoolproject.babble.presentation.state.ChatRoomListState
 import com.myschoolproject.babble.presentation.state.ChatState
 import com.myschoolproject.babble.presentation.state.FriendsListState
 import com.myschoolproject.babble.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -31,7 +34,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val chatRepository: ChatRepository,
-    private val friendsRepository: FriendsRepository
+    private val friendsRepository: FriendsRepository,
+    private val chattingRepository: ChattingRepository
 ) : ViewModel() {
     private val TAG = "ChatViewModel_Log"
 
@@ -44,6 +48,8 @@ class ChatViewModel @Inject constructor(
     var friendData = mutableStateOf(ChatEntity("", "", ""))
         private set
 
+    // 원래 이렇게 선언 해서 사용 하면 안됨
+    // 그래서 채팅(realtime database)은 따로 관리
     var chatRef = Firebase.database.reference
 
     var inputMessage = mutableStateOf("")
@@ -53,16 +59,43 @@ class ChatViewModel @Inject constructor(
 
     init {
         Log.d("ChatViewModel", "ChatViewModel Init!!")
-//        viewModelScope.launch {
-//            chatRepository.getChatRoom()
-//        }
+
     }
 
 //    var chatRoomState = mutableStateOf(emptyList<ChatEntity>())
 //        private set
 
-    fun updateChatState(chat: Chat) {
-        _chatState.value.chatList.add(chat)
+    fun startChatting(my_email: String, friend_email: String) {
+        val id_email2 = my_email.split("@")[0]
+        val friend_email2 = friend_email.split("@")[0]
+
+        chattingRepository.getChatMessages(id_email2, friend_email2).onEach { result ->
+            when (result) {
+                is Resource.Success -> {
+                    _chatState.value = chatState.value.copy(
+                        chatList = result.data ?: emptyList(),
+                        loading = false
+                    )
+                    Log.d(
+                        "ChattingLog",
+                        "chattingViewModel Trigger! (message: ${result.data!!})"
+                    )
+                }
+
+                is Resource.Loading -> {
+                    _chatState.value = chatState.value.copy(
+                        loading = true
+                    )
+                }
+
+                is Resource.Error -> {
+                    _chatState.value = chatState.value.copy(
+                        error = result.message ?: "Firebase Error",
+                        loading = false
+                    )
+                }
+            }
+        }.launchIn(viewModelScope)
     }
 
     fun getFriendDataByEmail(friend_email: String) {
@@ -107,137 +140,85 @@ class ChatViewModel @Inject constructor(
     }
 
 
-    fun getAllChat(id_email: String, friend_email: String) {
-        if (friend_email.isNotEmpty()) {
-            val id_email2 = id_email.split("@")[0]
-            val friend_email2 = friend_email.split("@")[0]
-
-            var chatList = arrayListOf<Chat>()
-
-            _chatState.value = chatState.value.copy(
-                chatList = chatList,
-                loading = true
-            )
-
-            // 이건 비효율... 읽기 작업이 2배로 든다 (start)
-            if (!chatRef.child("${id_email2}-${friend_email2}").key.isNullOrEmpty()) {
-                chatRef.child("${id_email2}-${friend_email2}")
-                    .addListenerForSingleValueEvent(object : ValueEventListener {
-                        override fun onDataChange(snapshot: DataSnapshot) {
-                            snapshot.children.forEach { s ->
-                                chatList.add(
-                                    Chat(
-                                        email = s.getValue(Chat::class.java)!!.email,
-                                        message = s.getValue(Chat::class.java)!!.message
-                                    )
-                                )
-                                Log.d(TAG, s.getValue(Chat::class.java)!!.message)
-                            }
-                            _chatState.value = chatState.value.copy(
-                                chatList = chatList,
-                                loading = false
-                            )
-                            Log.d(TAG, "chatState: ${chatState.value.chatList.toString()}")
-                        }
-
-                        override fun onCancelled(error: DatabaseError) {
-                            Log.d(TAG, "firebase database get error")
-                        }
-                    })
-            } else {
-                chatRef.child("${friend_email2}-${id_email2}")
-                    .addListenerForSingleValueEvent(object : ValueEventListener {
-                        override fun onDataChange(snapshot: DataSnapshot) {
-                            snapshot.children.forEach { s ->
-                                chatList.add(
-                                    Chat(
-                                        email = s.getValue(Chat::class.java)!!.email,
-                                        message = s.getValue(Chat::class.java)!!.message
-                                    )
-                                )
-                                Log.d(TAG, s.getValue(Chat::class.java)!!.message)
-                            }
-                            _chatState.value = chatState.value.copy(
-                                chatList = chatList,
-                                loading = false
-                            )
-                            Log.d(TAG, "chatState: ${chatState.value.chatList.toString()}")
-                        }
-
-                        override fun onCancelled(error: DatabaseError) {
-                            Log.d(TAG, "firebase database get error")
-                        }
-                    })
-            }
-
-        }
-        // 이건 비효율... 읽기 작업이 2배로 든다 (end)
-    }
+//    fun getAllChat(id_email: String, friend_email: String) {
+//        if (friend_email.isNotEmpty()) {
+//            val id_email2 = id_email.split("@")[0]
+//            val friend_email2 = friend_email.split("@")[0]
+//
+//            var chatList = arrayListOf<Chat>()
+//
+//            _chatState.value = chatState.value.copy(
+//                chatList = chatList,
+//                loading = true
+//            )
+//
+//            // 이건 비효율... 읽기 작업이 2배로 든다 (start)
+//            if (!chatRef.child("${id_email2}-${friend_email2}").key.isNullOrEmpty()) {
+//                chatRef.child("${id_email2}-${friend_email2}")
+//                    .addListenerForSingleValueEvent(object : ValueEventListener {
+//                        override fun onDataChange(snapshot: DataSnapshot) {
+//                            snapshot.children.forEach { s ->
+//                                chatList.add(
+//                                    Chat(
+//                                        email = s.getValue(Chat::class.java)!!.email,
+//                                        message = s.getValue(Chat::class.java)!!.message
+//                                    )
+//                                )
+//                                Log.d(TAG, s.getValue(Chat::class.java)!!.message)
+//                            }
+//                            _chatState.value = chatState.value.copy(
+//                                chatList = chatList,
+//                                loading = false
+//                            )
+//                            Log.d(TAG, "chatState: ${chatState.value.chatList.toString()}")
+//                        }
+//
+//                        override fun onCancelled(error: DatabaseError) {
+//                            Log.d(TAG, "firebase database get error")
+//                        }
+//                    })
+//            } else {
+//                chatRef.child("${friend_email2}-${id_email2}")
+//                    .addListenerForSingleValueEvent(object : ValueEventListener {
+//                        override fun onDataChange(snapshot: DataSnapshot) {
+//                            snapshot.children.forEach { s ->
+//                                chatList.add(
+//                                    Chat(
+//                                        email = s.getValue(Chat::class.java)!!.email,
+//                                        message = s.getValue(Chat::class.java)!!.message
+//                                    )
+//                                )
+//                                Log.d(TAG, s.getValue(Chat::class.java)!!.message)
+//                            }
+//                            _chatState.value = chatState.value.copy(
+//                                chatList = chatList,
+//                                loading = false
+//                            )
+//                            Log.d(TAG, "chatState: ${chatState.value.chatList.toString()}")
+//                        }
+//
+//                        override fun onCancelled(error: DatabaseError) {
+//                            Log.d(TAG, "firebase database get error")
+//                        }
+//                    })
+//            }
+//
+//        }
+//        // 이건 비효율... 읽기 작업이 2배로 든다 (end)
+//    }
 
     // checkChatRoom() 이 완료 되면 실행
     private fun getChatRoom() {
         Log.d("ChatViewModel", "getChatRoom()")
         viewModelScope.launch {
             if (chatRepository.getChatRoom().isNotEmpty()) {
-                val chatRoomList = chatRepository.getChatRoom()
                 _chatRoomState.value = _chatRoomState.value.copy(loading = true)
+                val chatRoomList = chatRepository.getChatRoom()
                 _chatRoomState.value =
                     _chatRoomState.value.copy(chatRoomList = chatRoomList, loading = false)
             }
         }
     }
-
-    // RoomDB 안 쓴 버전
-//    fun checkChatRoom(id_email: String) {
-//        Log.d("ChatViewModel", "checkChatRoom()")
-//
-//        val id_email2 = id_email.split("@")[0]
-//
-//        viewModelScope.launch {
-//            friendsRepository.getFriends(id_email).onEach { result ->
-//                when (result) {
-//                    is Resource.Success -> {
-//                        val friendsList = result.data
-//                        var resultFriendsList = arrayListOf<ChatEntity>()
-//                        friendsList?.let {
-//                            it.forEach { friend ->
-//                                val friend_email2 = friend.id_email.split("@")[0]
-//
-//                                if (!chatRef.child("${id_email2}-${friend_email2}").key.isNullOrEmpty()) {
-//                                    chatRepository.createChatRoom(friend)
-//                                    resultFriendsList.add(
-//                                        ChatEntity(
-//                                            friend_email = friend.id_email,
-//                                            friend_nickname = friend.nickname,
-//                                            friend_thumbnail = friend.thumbnail
-//                                        )
-//                                    )
-////                                    getChatRoom()
-//                                }
-//                            }
-//                            _chatRoomState.value = chatRoomState.value.copy(
-//                                chatRoomList = resultFriendsList,
-//                                loading = false
-//                            )
-//                        }
-//                    }
-//                    is Resource.Loading -> {
-//                        _chatRoomState.value = chatRoomState.value.copy(
-//                            loading = true
-//                        )
-//                    }
-//                    is Resource.Error -> {
-//                        _chatRoomState.value = chatRoomState.value.copy(
-//                            error = result.message ?: "Unexpected Error",
-//                            loading = false
-//                        )
-//                    }
-//                }
-//            }.launchIn(viewModelScope)
-//
-////            getChatRoom()
-//        }
-//    }
 
     fun checkChatRoom(id_email: String) {
         Log.d("ChatViewModel", "checkChatRoom()")
@@ -256,7 +237,9 @@ class ChatViewModel @Inject constructor(
 
                                 chatRef.addListenerForSingleValueEvent(object : ValueEventListener {
                                     override fun onDataChange(snapshot: DataSnapshot) {
-                                        if (snapshot.child("${id_email2}-${friend_email2}").exists()) {
+                                        if (snapshot.child("${id_email2}-${friend_email2}")
+                                                .exists()
+                                        ) {
                                             Log.d(
                                                 "ChatViewModel",
                                                 "checkChatRoom(), ${id_email2}-${friend_email2}"
@@ -274,6 +257,7 @@ class ChatViewModel @Inject constructor(
                             }
                         }
                     }
+
                     is Resource.Loading -> {}
                     is Resource.Error -> {}
                 }
@@ -289,7 +273,28 @@ class ChatViewModel @Inject constructor(
         val friend_email2 = friendData.friend_email.split("@")[0]
 
         viewModelScope.launch {
-            chatRepository.deleteChatRoom(friendData)
+            chatRepository.deleteChatRoom(friendData).onEach { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        _chatRoomState.value = chatRoomState.value.copy(
+                            loading = false
+                        )
+                    }
+
+                    is Resource.Loading -> {
+                        _chatRoomState.value = chatRoomState.value.copy(
+                            loading = true
+                        )
+                    }
+
+                    is Resource.Error -> {
+                        _chatRoomState.value = chatRoomState.value.copy(
+                            error = result.message ?: "DB Delete Error",
+                            loading = false
+                        )
+                    }
+                }
+            }.launchIn(viewModelScope)
 
             // delete firebase(realtime database)
             if (!chatRef.child("${id_email2}-${friend_email2}").key.isNullOrEmpty()) {

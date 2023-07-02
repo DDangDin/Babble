@@ -15,9 +15,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -26,16 +28,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.myschoolproject.babble.data.source.local.entity.ChatEntity
 import com.myschoolproject.babble.data.source.remote.firebase.Chat
 import com.myschoolproject.babble.presentation.state.ChatState
-import com.myschoolproject.babble.presentation.viewmodel.ChatViewModel
 import com.myschoolproject.babble.ui.theme.MainColorMiddle
 import com.myschoolproject.babble.ui.theme.PretendardFont
 import com.myschoolproject.babble.ui.theme.SpacerCustomColor
 import com.myschoolproject.babble.utils.CustomSharedPreference
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -52,8 +51,6 @@ fun ChattingScreen(
 
     val context = LocalContext.current
 
-    val chatList = chatState.chatList
-
     val my_email = CustomSharedPreference(context).getUserPrefs("email")
 
     val scrollState = rememberLazyListState(
@@ -64,6 +61,13 @@ fun ChattingScreen(
         }
     )
     val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(key1 = chatState.chatList) {
+        Log.d("ChattingLog_Scroll", "ChattingLog_Scroll")
+        if (chatState.chatList.size - 1 >= 0) {
+            scrollState.animateScrollToItem(chatState.chatList.size - 1)
+        }
+    }
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -96,9 +100,9 @@ fun ChattingScreen(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .padding(top = 60.dp, start = 10.dp, end = 10.dp),
+                    .padding(top = 80.dp, start = 10.dp, end = 10.dp),
             ) {
-                if (chatList.isNotEmpty()) {
+                if (chatState.chatList.isNotEmpty() && !chatState.loading) {
                     LazyColumn(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -108,17 +112,15 @@ fun ChattingScreen(
                         ),
                         state = scrollState
                     ) {
-                        items(chatList) { chat ->
-                            if (chat.message.isNotEmpty()) {
-                                val isMyChat = chat.email == my_email.split("@")[0]
-                                ChatCardView(
-                                    modifier = Modifier
-                                        .fillMaxWidth(),
-                                    isMyChat = isMyChat,
-                                    chat = chat,
-                                    friendData = friendData
-                                )
-                            }
+                        items(chatState.chatList) { chat ->
+                            val isMyChat = chat.email == my_email.split("@")[0]
+                            ChatCardView(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                isMyChat = isMyChat,
+                                chat = chat,
+                                friendData = friendData
+                            )
                         }
                     }
                 } else {
@@ -147,11 +149,11 @@ fun ChattingScreen(
             onSend = {
                 onSend()
                 coroutineScope.launch {
-                    if (chatList.size - 1 >= 0) {
-                        scrollState.animateScrollToItem(chatList.size - 1)
+                    if (chatState.chatList.size - 1 >= 0) {
+                        scrollState.animateScrollToItem(chatState.chatList.size - 1)
                         CustomSharedPreference(context).setUserPrefs(
                             "chat_scroll_value",
-                            (chatList.size - 1).toString()
+                            (chatState.chatList.size - 1).toString()
                         )
                     }
                 }
@@ -175,7 +177,7 @@ fun ChattingScreenPreview() {
         inputMessageChanged = {},
         chatState = ChatState(),
         onSend = {},
-        onExitRoom = {},
+        onExitRoom = {}
     )
 }
 

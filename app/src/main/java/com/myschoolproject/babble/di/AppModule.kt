@@ -13,6 +13,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.myschoolproject.babble.data.repository.AuthRepositoryImpl
 import com.myschoolproject.babble.data.repository.ChatRepositoryImpl
+import com.myschoolproject.babble.data.repository.ChattingRepositoryImpl
 import com.myschoolproject.babble.data.repository.DisplayFriendsRepositoryImpl
 import com.myschoolproject.babble.data.repository.FirebaseStorageRepositoryImpl
 import com.myschoolproject.babble.data.repository.FriendsRepositoryImpl
@@ -26,6 +27,7 @@ import com.myschoolproject.babble.data.source.local.LikeListDatabase
 import com.myschoolproject.babble.data.source.remote.BabbleApi
 import com.myschoolproject.babble.domain.repository.AuthRepository
 import com.myschoolproject.babble.domain.repository.ChatRepository
+import com.myschoolproject.babble.domain.repository.ChattingRepository
 import com.myschoolproject.babble.domain.repository.DisplayFriendsRepository
 import com.myschoolproject.babble.domain.repository.FirebaseStorageRepository
 import com.myschoolproject.babble.domain.repository.FriendsRepository
@@ -154,9 +156,15 @@ object AppModule {
         return FriendsRepositoryImpl(friendsRef)
     }
 
-//    @Provides
-//    @Singleton
-//    fun provideChatRef() = Firebase.database.reference
+    @Provides
+    @Singleton
+    fun provideChatRef() = Firebase.database.reference
+
+    @Provides
+    @Singleton
+    fun provideChattingRepository(chatRef: DatabaseReference): ChattingRepository {
+        return ChattingRepositoryImpl(chatRef)
+    }
 
     @Provides
     @Singleton
