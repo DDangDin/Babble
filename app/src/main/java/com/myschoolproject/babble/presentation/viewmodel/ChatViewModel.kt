@@ -59,7 +59,6 @@ class ChatViewModel @Inject constructor(
 
     init {
         Log.d("ChatViewModel", "ChatViewModel Init!!")
-
     }
 
 //    var chatRoomState = mutableStateOf(emptyList<ChatEntity>())

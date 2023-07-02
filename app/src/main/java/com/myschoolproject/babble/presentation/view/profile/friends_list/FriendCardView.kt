@@ -61,13 +61,19 @@ fun FriendCardView(
         modifier = modifier
             .fillMaxWidth()
             .combinedClickable(
-                onLongClick = { isLongClick = true },
-                onClick = {
-                    if (isLongClick) {
-                        isLongClick = false
+                onLongClick = {
+                    if (!isRequest) {
+                        isLongClick = true
                     }
-                    createChatRoom()
-                    onNavigateChatting()
+                },
+                onClick = {
+                    if (!isRequest) {
+                        if (isLongClick) {
+                            isLongClick = false
+                        }
+                        createChatRoom()
+                        onNavigateChatting()
+                    }
                 }
             ),
         verticalAlignment = Alignment.CenterVertically,

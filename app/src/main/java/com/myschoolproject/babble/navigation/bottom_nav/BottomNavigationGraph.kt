@@ -55,11 +55,23 @@ fun BottomNavigationGraph(
             if (userState.userData.thumbnail != CustomSharedPreference(context).getUserPrefs("user_photo")) {
                 homeViewModel.getProfilePhoto(my_email)
             }
-            CustomSharedPreference(context).setUserPrefs("user_data_email", userState.userData.email)
-            CustomSharedPreference(context).setUserPrefs("user_data_nickname", userState.userData.nickname)
-            CustomSharedPreference(context).setUserPrefs("user_data_age", userState.userData.age.toString())
+            CustomSharedPreference(context).setUserPrefs(
+                "user_data_email",
+                userState.userData.email
+            )
+            CustomSharedPreference(context).setUserPrefs(
+                "user_data_nickname",
+                userState.userData.nickname
+            )
+            CustomSharedPreference(context).setUserPrefs(
+                "user_data_age",
+                userState.userData.age.toString()
+            )
             CustomSharedPreference(context).setUserPrefs("user_data_city", userState.userData.city)
-            CustomSharedPreference(context).setUserPrefs("user_data_thumbnail", userState.userData.thumbnail)
+            CustomSharedPreference(context).setUserPrefs(
+                "user_data_thumbnail",
+                userState.userData.thumbnail
+            )
         }
     }
 
@@ -92,7 +104,11 @@ fun BottomNavigationGraph(
                 },
                 alreadyCheck = homeViewModel.alreadyCheck.value,
                 checkLikeAndDislike = { index, like ->
-                    homeViewModel.checkLikeAndDislike(index, like, randomFriendsList_filtered[index])
+                    homeViewModel.checkLikeAndDislike(
+                        index,
+                        like,
+                        randomFriendsList_filtered[index]
+                    )
                 },
                 updateUserThumbnail = homeViewModel.updateUserThumbnail.value
             )
@@ -106,7 +122,8 @@ fun BottomNavigationGraph(
                 },
                 checkChatRoom = { chatViewModel.checkChatRoom(my_email) },
                 deleteChatRoom = { chatEntity ->
-                    chatViewModel.deleteChatRoomByEmail(my_email, chatEntity) }
+                    chatViewModel.deleteChatRoomByEmail(my_email, chatEntity)
+                }
             )
         }
 

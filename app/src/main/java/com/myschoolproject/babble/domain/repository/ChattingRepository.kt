@@ -1,6 +1,8 @@
 package com.myschoolproject.babble.domain.repository
 
+import com.myschoolproject.babble.data.source.local.entity.ChatEntity
 import com.myschoolproject.babble.data.source.remote.firebase.Chat
+import com.myschoolproject.babble.presentation.state.ChatRoomListState
 import com.myschoolproject.babble.utils.Resource
 import kotlinx.coroutines.flow.Flow
 

@@ -6,6 +6,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
+import com.myschoolproject.babble.data.source.local.entity.ChatEntity
 import com.myschoolproject.babble.data.source.remote.firebase.Chat
 import com.myschoolproject.babble.domain.repository.ChattingRepository
 import com.myschoolproject.babble.utils.Resource
